@@ -2,7 +2,6 @@
 
 This library provides a [Python][1] interface to the Linux sudoers file.  python-sudoers is open sourced under the [BSD 3-Clause license](LICENSE.txt).
 
-[![Build Status](https://img.shields.io/travis/broadinstitute/python-sudoers/master.svg)](https://travis-ci.org/broadinstitute/python-sudoers)
 [![CircleCI](https://circleci.com/gh/broadinstitute/python-sudoers/tree/master.svg?style=svg)](https://circleci.com/gh/broadinstitute/python-sudoers/tree/master)
 [![codecov](https://codecov.io/gh/broadinstitute/python-sudoers/branch/master/graph/badge.svg)](https://codecov.io/gh/broadinstitute/python-sudoers)
 

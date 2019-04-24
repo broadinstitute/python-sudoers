@@ -37,7 +37,7 @@ commands:
     description: 'Install and cache dependencies'
     steps:
       - restore_cache:
-          key: v1-python-sudoers-{{ checksum "Pipfile" }}-{{ .Environment.CIRCLE_JOB }}
+          key: v2-{{ .Environment.CIRCLE_PROJECT_REPONAME}}-{{ checksum "Pipfile" }}-{{ .Environment.CIRCLE_JOB }}
       - run:
           name: 'Install Pipenv'
           command: pip install pipenv
@@ -48,9 +48,9 @@ commands:
             pipenv lock
             pipenv sync --dev
       - save_cache:
-          key: v1-python-sudoers-{{ checksum "Pipfile" }}-{{ .Environment.CIRCLE_JOB }}
+          key: v2-{{ .Environment.CIRCLE_PROJECT_REPONAME}}-{{ checksum "Pipfile" }}-{{ .Environment.CIRCLE_JOB }}
           paths:
-            - ~/.local/share/virtualenvs/repo-NCIGkioc
+            - ~/.local/share/virtualenvs
   publish:
     description: 'Publish the module to PyPi'
     steps:
@@ -120,38 +120,22 @@ workflows:
       - preflight
   test_and_deploy:
     jobs:
-      # - build:
-      #     filters:
-      #       tags:
-      #         only: /.*/
       - run-tests:
           name: 'python-2.7'
           version: '2.7'
-          # requires:
-          #   - build
       - run-tests:
           name: 'python-3.4'
           version: '3.4'
-          # requires:
-          #   - build
       - run-tests:
           name: 'python-3.5'
           version: '3.5'
-          # requires:
-          #   - build
       - run-tests:
           name: 'python-3.6'
           version: '3.6'
-          # requires:
-          #   - build
       - run-tests:
           name: 'python-3.7'
           version: '3.7'
-          # requires:
-          #   - build
       - deploy:
-          # requires:
-          #   - build
           filters:
             tags:
               only: /[0-9]+(\.[0-9]+)*/
