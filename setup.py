@@ -18,7 +18,7 @@ def get_long_description():
 
 setuptools.setup(
     name="pysudoers",
-    version="0.1.0",
+    version="1.0.0",
     author="Andrew Teixeira",
     author_email="teixeira@broadinstitute.org",
     description="Python interface to the Linux sudoers file",
