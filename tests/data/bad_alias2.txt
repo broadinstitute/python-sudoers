@@ -1,0 +1,5 @@
+Host_Alias SOMEHOSTS=some-host1, some-host2
+User_Alias SOMEUSERS=user1,user2,user3
+Runas_Alias SOMERUNAS=
+Cmnd_Alias SOMECMND=/path/to/the/command
+SOMEUSERS SOMEHOSTS=(SOMERUNAS) SOMECMND

@@ -12,6 +12,7 @@ class Sudoers(object):
 
     def __init__(self, path):
         """Initialize the class.
+
         :param string path: The path to the sudoers file
         """
         self._alias_types = ["Cmnd_Alias", "Host_Alias", "Runas_Alias", "User_Alias"]
@@ -37,14 +38,19 @@ class Sudoers(object):
         return self._data["Host_Alias"]
 
     @property
-    def runas_aliases(self):
-        """Return the run as aliases."""
-        return self._data["Runas_Alias"]
+    def path(self):
+        """Return the path to the sudoers file."""
+        return self._path
 
     @property
     def rules(self):
         """Return the rules."""
         return self._data["Rules"]
+
+    @property
+    def runas_aliases(self):
+        """Return the run as aliases."""
+        return self._data["Runas_Alias"]
 
     @property
     def user_aliases(self):
@@ -60,22 +66,22 @@ class Sudoers(object):
 
             # Raise an exception if there aren't at least 2 elements after the split
             if len(pieces) < 2:
-                raise AliasException("bad alias: %s" % line)
+                raise BadAliasException("bad alias: %s" % line)
 
             # We need to keep all line spacing, so use the original line with the index stripped
             kvline = re.sub(r"^%s " % index, "", line)
 
             # Split out the alias key/value
             keyval = kvline.split("=")
-            if len(keyval) != 2:
-                raise AliasException("bad alias: %s" % line)
+            if (len(keyval) != 2) or (not keyval[1]):
+                raise BadAliasException("bad alias: %s" % line)
             if keyval[0] in self._data[index]:
-                raise AliasException("duplicate alias: %s" % line)
+                raise DuplicateAliasException("duplicate alias: %s" % line)
 
             # Separate the comma-separated list of values
             val_list = keyval[1].split(",")
             if not val_list:
-                raise AliasException("bad alias: %s" % line)
+                raise BadAliasException("bad alias: %s" % line)
             # Make sure extra whitespace is stripped for each item in the list, then convert back to a list
             val_list = list(map(str.strip, val_list))
 
@@ -128,5 +134,9 @@ class Sudoers(object):
             self.parse_line(line)
 
 
-class AliasException(BaseException):
+class BadAliasException(BaseException):
+    """Provide a custom exception type to be raised when an alias is malformed."""
+
+
+class DuplicateAliasException(BaseException):
     """Provide a custom exception type to be raised when an alias is malformed."""
