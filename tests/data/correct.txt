@@ -1,0 +1,21 @@
+# Comments
+# At
+# Top
+# of
+# File
+Host_Alias SOMEHOSTS=some-host1, some-host2
+
+User_Alias SOMEUSERS=user1,user2,user3
+
+Runas_Alias SOMERUNAS=runuser
+
+Cmnd_Alias SOMECMND=/path/to/the/command
+
+# Rules
+SOMEUSERS SOMEHOSTS=(SOMERUNAS) SOMECMND
+
+SOMEUSERS ALL=(SOMERUNAS) /path/to/something/else
+
+SOMEUSERS SOMEHOSTS=(ALL) /path/to/something/else
+
+randouser SOMEHOSTS=(SOMERUNAS) SOMECMND, /path/to/more/things
