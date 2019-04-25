@@ -3,6 +3,9 @@
 # Top
 # of
 # File
+Defaults !insults
+Defaults:SOMEUSERS !umask
+
 Host_Alias SOMEHOSTS=some-host1, some-host2
 
 User_Alias SOMEUSERS=user1,user2,user3
@@ -16,6 +19,6 @@ SOMEUSERS SOMEHOSTS=(SOMERUNAS) SOMECMND
 
 SOMEUSERS ALL=(SOMERUNAS) /path/to/something/else
 
-SOMEUSERS SOMEHOSTS=(ALL) /path/to/something/else
+SOMEUSERS SOMEHOSTS = (ALL) NOPASSWD: /path/to/something/else, /path/to/more
 
-randouser SOMEHOSTS=(SOMERUNAS) SOMECMND, /path/to/more/things
+randouser SOMEHOSTS=(SOMERUNAS) SOMECMND, (root)/path/to/more/things
