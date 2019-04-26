@@ -11,15 +11,74 @@ pysudoers still runs on Python 2.7, and Python >= 3.4
 
 ## Features
 
+This library parses a sudoers file into its component parts.  It's not 100% compliant with the EBNF format of the file (yet), but it's getting there.  Currently, the script parses out 6 distinct line types from the file:
+
+* Defaults (This is only a string currently.  Pieces of a Defaults setting are not parsed/separated.)
+* Cmnd_Alias
+* Host_Alias
+* Runas_Alias
+* User_Alias
+* User specifications (which we call **rules**)
+
+As user specifications are the most complicated, they are most likely the area that needs the most improvement.  Currently, the following pieces of a user specification are separated out as part of the parsing:
+
+* User list
+* Host list
+* Command list (containing):
+ ** Tags
+ ** Run As notations
+ ** Commands
+
 ## Installing
 
 You can use pip to install pysudoers:
 
 ```sh
-pipenv install pysudoers
+pip install pysudoers
 ```
 
 ## Examples
+
+Parsing of the `sudoers` file is done as part of initializing the `Sudoers` object.  So, you can start using the properties under `Sudoers` immediately.  The following example will print out all the different "types" from the file:
+
+```python
+from pysudoers import Sudoers
+
+sobj = Sudoers(path="tmp/sudoers")
+
+for default in sobj.defaults:
+    print(default)
+
+for key in sobj.host_aliases:
+    print(key)
+    print(sobj.host_aliases[key])
+
+for key in sobj.cmnd_aliases:
+    print(key)
+    print(sobj.cmnd_aliases[key])
+
+for key in sobj.runas_aliases:
+    print(key)
+    print(sobj.runas_aliases[key])
+
+for key in sobj.user_aliases:
+    print(key)
+    print(sobj.user_aliases[key])
+
+for rule in sobj.rules:
+    print(rule)
+```
+
+Now, suppose you want to print out all the user specifications (rules), but you only want to see the users and hosts for each rule.
+
+```python
+from pysudoers import Sudoers
+
+sobj = Sudoers(path="tmp/sudoers")
+
+for rule in sobj.rules:
+    print("%s | %s" % (",".join(rule["users"]), ",".join(rule["hosts"])))
+```
 
 ## Contributing
 
