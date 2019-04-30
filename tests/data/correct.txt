@@ -8,7 +8,10 @@ Defaults:SOMEUSERS !umask
 
 Host_Alias SOMEHOSTS=some-host1, some-host2
 
-User_Alias SOMEUSERS=user1,user2,user3
+User_Alias SOMEUSERS=user1,user2,user3, \
+    user4, user5, \
+    user6, \
+    user7
 
 Runas_Alias SOMERUNAS=runuser
 
