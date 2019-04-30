@@ -249,6 +249,53 @@ class Sudoers(object):
 
         sudo.close()
 
+    def _resolve_aliases(self, alias_type, name):
+        """For the provided alias type, resolve the provided name for any aliases that may exist.
+
+        This function is recursive in nature.  If the provided name is not an existing alias, it is returned (as a
+        list). If the name is an alias of the provided type, the function is called again on each of the names derived
+        from the alias in case there are nested aliases.
+
+        :param obj alias_type: The alias type for which we are resolving
+        :param str name: A string representing a name or another alias
+
+        :return: A list of one or more name
+        :rtype: list
+        """
+        data = []
+
+        # See if the name provided is an alias or not.
+        if name in self._data[alias_type]:
+            namematch = self._data[alias_type][name]
+
+            # For each name in the list, try to resolve that name as well, and then add it to the accumulator
+            for expanded_name in namematch:
+                resolved = self._resolve_aliases(alias_type, expanded_name)
+                # Cycle through the resolved list and remove any duplicates
+                for res in resolved:
+                    if res not in data:
+                        data.append(res)
+        else:
+            data = [name]
+
+        return data
+
+    def resolve_command(self, command):
+        """Resolve the provided command for any aliases that may exist."""
+        return self._resolve_aliases("Cmnd_Alias", command)
+
+    def resolve_host(self, host):
+        """Resolve the provided host for any aliases that may exist."""
+        return self._resolve_aliases("Host_Alias", host)
+
+    def resolve_runas(self, runas):
+        """Resolve the provided run as user for any aliases that may exist."""
+        return self._resolve_aliases("Runas_Alias", runas)
+
+    def resolve_user(self, user):
+        """Resolve the provided user for any aliases that may exist."""
+        return self._resolve_aliases("User_Alias", user)
+
 
 class BadAliasException(Exception):
     """Provide a custom exception type to be raised when an alias is malformed."""

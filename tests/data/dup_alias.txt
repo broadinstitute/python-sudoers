@@ -1,2 +1,0 @@
-Host_Alias SOMEHOSTS=some-host1, some-host2
-Host_Alias SOMEHOSTS=host3, host4
