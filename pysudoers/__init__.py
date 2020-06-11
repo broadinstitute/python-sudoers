@@ -105,21 +105,46 @@ class Sudoers(object):
         :rtype: dict
         """
         # This is the regular expression to try to parse out each command per line if it has a run as
-        runas_re = re.compile(r"\s*\(([\w,?]*)\)\s*([\S\s]*)")
+        runas_re = re.compile(r"\s*\(([\w,?:]*)\)\s*([\S\s]*)")
         data = []
 
         # runas and tags are running collectors as they are inherited by later commands
         runas = None
         tags = None
 
-        cmds = commands.split(",")
+        # split the commands along commas without splitting users/groups inside run as parenthesis
+        # ex: "root ALL = (ALL, ALL) ALL" shouldn't be split along the comma in parenthesis
+        cmds = list()
+        in_parens = False
+        curr_string = ""
+        for char in commands:
+            if in_parens:
+                curr_string += char
+                if char == ')':
+                    in_parens = False
+            else:
+                if char == ',':
+                    cmds.append(curr_string)
+                    curr_string = ""
+                elif char == '(':
+                    in_parens = True
+                    curr_string += '('
+                else:
+                    curr_string += char
+        if curr_string != "":
+            #add the last command
+            cmds.append(curr_string)
+
         for command in cmds:
             tmp_data = {}
             tmp_command = None
             # See if we have parentheses (a "run as") in the current command
             match = runas_re.search(command)
             if match:
-                tmp_data["run_as"] = match.group(1).split(",")
+                # split along commas and colons to get users and groups
+                unfiltered_data = re.split(",|:", match.group(1))
+                # filter out empty string in the case of (: [groups])
+                tmp_data["run_as"] = list(filter(None, unfiltered_data))
                 # Keep track of the latest "run_as"
                 runas = tmp_data["run_as"]
                 # tmp["command"] = match.group(2)
@@ -183,8 +208,8 @@ class Sudoers(object):
         """
         defaults_re = re.compile(r"^Defaults")
 
-        # Trim unnecessary spaces (no spaces before/after commas and colons)
-        line = re.sub(r"\s*([,:])\s*", r"\g<1>", line)
+        # Trim unnecessary spaces (no spaces before/after commas, colons, and equals signs)
+        line = re.sub(r"\s*([,:=])\s*", r"\g<1>", line)
 
         pieces = line.split()
         if pieces[0] in self._alias_types:
