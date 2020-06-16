@@ -150,8 +150,8 @@ class Sudoers(object):
                 # tmp["command"] = match.group(2)
                 tmp_command = match.group(2)
             else:
-                # Else, just treat this like a normal command
-                tmp_data["run_as"] = runas
+                # Else, just treat this like a normal command (only root can be impersonated)
+                tmp_data["run_as"] = ['root']
                 # tmp["command"] = command
                 tmp_command = command
 
