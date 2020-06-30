@@ -109,7 +109,9 @@ class Sudoers(object):
         data = []
 
         # runas and tags are running collectors as they are inherited by later commands
-        runas = None
+        # runas starts as 'root' to account for any commands without an explicit run as list,
+        # since they can only appear at the start, before the first explicit run as list
+        runas = ['root']
         tags = None
 
         # split the commands along commas without splitting users/groups inside run as parenthesis
@@ -150,8 +152,8 @@ class Sudoers(object):
                 # tmp["command"] = match.group(2)
                 tmp_command = match.group(2)
             else:
-                # Else, just treat this like a normal command (only root can be impersonated)
-                tmp_data["run_as"] = ['root']
+                # Else, just treat this like a normal command
+                tmp_data["run_as"] = runas
                 # tmp["command"] = command
                 tmp_command = command
 
