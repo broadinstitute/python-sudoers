@@ -105,7 +105,7 @@ class Sudoers(object):
         :rtype: dict
         """
         # This is the regular expression to try to parse out each command per line if it has a run as
-        runas_re = re.compile(r"\s*\(([\w,?:]*)\)\s*([\S\s]*)")
+        runas_re = re.compile(r"\s*\(([\w,!?:]*)\)\s*([\S\s]*)")
         data = []
 
         # runas and tags are running collectors as they are inherited by later commands
