@@ -73,7 +73,7 @@ class Sudoers(object):
         :rtype: tuple
         """
         # We need to keep all line spacing, so use the original line with the index stripped
-        kvline = re.sub(r"^%s " % alias_key, "", line)
+        kvline = re.sub(r"^%s\s*" % alias_key, "", line)
 
         # Split out the alias key/value
         keyval = kvline.split("=")
