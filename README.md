@@ -7,7 +7,7 @@ This library provides a [Python][1] interface to the Linux sudoers file.  python
 
 ## Basics
 
-pysudoers still runs on Python 2.7, and Python >= 3.4
+`pysudoers` runs on [Python][1] >= 3.6
 
 ## Features
 
@@ -25,9 +25,9 @@ As user specifications are the most complicated, they are most likely the area t
 * User list
 * Host list
 * Command list (containing):
- ** Tags
- ** Run As notations
- ** Commands
+  * Tags
+  * Run As notations
+  * Commands
 
 ## Installing
 
@@ -95,6 +95,18 @@ To start a development environment, you should be able to just run the `dev.sh` 
 ```
 
 The first time you run the script, it should build the [Docker][3] image and then drop you into the container's shell.  The directory where you cloned this repository should be volume mounted in to `/usr/src`, which should also be the current working directory.  From there, you can make changes as you see fit.  Tests can be run from the `/usr/src` directory by simply typing `green` as [green][4] has been setup to with the correct parameters.
+
+## Changelog
+
+To generate the `CHANGELOG.md`, you will need [Docker][3] and a GitHub personal access token.  We currently use [github-changelog-generator](https://github.com/github-changelog-generator/github-changelog-generator) for this purpose.  The following should generate the file using information from GitHub:
+
+```sh
+docker run -it --rm \
+    -e CHANGELOG_GITHUB_TOKEN='yourtokenhere' \
+    -v "$(pwd)":/working \
+    -w /working \
+    ferrarimarco/github-changelog-generator --verbose
+```
 
 ## Releases
 

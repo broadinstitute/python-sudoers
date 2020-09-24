@@ -91,7 +91,7 @@ class Sudoers(object):
         return (keyval[0], val_list)
 
     @staticmethod
-    def parse_commands(commands):
+    def parse_commands(commands):  # pylint: disable-msg=too-many-locals
         """Parse all commands from a rule line.
 
         Given a portion of a user specification (rule) line representing the *commands* part of the rule, parse out
@@ -134,7 +134,7 @@ class Sudoers(object):
                 else:
                     curr_string += char
         if curr_string != "":
-            #add the last command
+            # add the last command
             cmds.append(curr_string)
 
         for command in cmds:
