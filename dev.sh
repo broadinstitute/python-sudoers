@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DOCKER_IMAGE='pysudoers:latest'
+DOCKER_IMAGE='pysudoers:dev'
 SUDO=
 
 SCRIPT_DIR="$( cd -P "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"

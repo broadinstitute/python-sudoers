@@ -88,7 +88,7 @@ Pull requests to add functionality and fix bugs are always welcome.  Please chec
 
 We try to have a high level of test coverage on the code.  Therefore, when adding anything to the repo, tests should be written to test a new feature or to test a bug fix so that there won't be a regression.  This library is setup to be pretty simple to build a working development environment using [Docker][3].  Therefore, it is suggested that you have [Docker][3] installed where you clone this repository to make development easier.
 
-To start a development environment, you should be able to just run the `dev.sh` script.  This script will use the `Dockerfile` in this repository to build a [Docker][3] container with all the dependencies for development installed using [Pipenv][2].
+To start a development environment, you should be able to just run the `dev.sh` script.  This script will use the `Dockerfile` in this repository to build a [Docker][3] container with all the dependencies for development installed using [Poetry][2].
 
 ```sh
 ./dev.sh
@@ -126,7 +126,7 @@ git push --tags
 ```
 
 [1]: https://www.python.org/ "Python"
-[2]: https://pipenv.readthedocs.io/en/latest/ "Pipenv"
+[2]: https://python-poetry.org/ "Poetry"
 [3]: https://www.docker.com/ "Docker"
 [4]: https://github.com/CleanCut/green "green"
 [5]: https://pypi.org/project/bump2version/ "bump2version"

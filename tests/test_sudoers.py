@@ -21,7 +21,7 @@ from pysudoers import Sudoers
 class TestSudoers(TestCase):
     """Act as a base class for all Sudoers tests."""
 
-    def setUp(self):
+    def setUp(self):  # pylint:disable=invalid-name
         """Set up class-wide variables and mocks."""
         super().setUp()
 
@@ -55,7 +55,7 @@ class TestSudoers(TestCase):
 
         self.fake_path = "/path/to/sudoers"
 
-    def tearDown(self):
+    def tearDown(self):  # pylint:disable=invalid-name
         """Tear down everything after each test."""
 
         super().tearDown()
