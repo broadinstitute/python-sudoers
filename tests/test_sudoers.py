@@ -23,7 +23,7 @@ class TestSudoers(TestCase):
 
     def setUp(self):
         """Set up class-wide variables and mocks."""
-        super(TestSudoers, self).setUp()
+        super().setUp()
 
         # Differentiate patch IDs for "open" depending on the Python version
         self.python_major_ver = sys.version_info[0]
@@ -58,7 +58,7 @@ class TestSudoers(TestCase):
     def tearDown(self):
         """Tear down everything after each test."""
 
-        super(TestSudoers, self).tearDown()
+        super().tearDown()
 
         mock.patch.stopall()
 
@@ -145,7 +145,7 @@ class TestProperties(TestSudoers):
 
     def setUp(self):
         """Set up class-wide variables and mocks."""
-        super(TestProperties, self).setUp()
+        super().setUp()
 
         self.sudoobj = Sudoers(path=self.test_correct_file)
 
