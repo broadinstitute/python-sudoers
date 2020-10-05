@@ -1,0 +1,32 @@
+---
+name: 'deploy'
+
+'on':
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
+
+jobs:
+  pypi_deploy:
+
+    runs-on: 'ubuntu-latest'
+
+    steps:
+      - name: 'Checkout repo'
+        uses: 'actions/checkout@v2'
+
+      - name: 'Set up Python 3.8'
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+
+      - name: 'Setup PyPi credential'
+        env:
+          PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+        run: 'poetry config pypi-token.pypi "$PYPI_TOKEN"'
+
+      - name: 'Package build'
+        run: 'poetry build'
+
+      - name: 'Publish package to PyPi'
+        run: 'poetry publish'

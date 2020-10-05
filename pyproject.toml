@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "pysudoers"
+version = "2.0.0"
+description = "Python interface to the Linux sudoers file"
+license = "BSD-3-Clause"
+authors = ["Andrew Teixeira <teixeira@broadinstitute.org>"]
+readme = "README.md"
+repository = "https://github.com/broadinstitute/python-sudoers.git"
+homepage = "https://github.com/broadinstitute/python-sudoers.git"
+keywords = ["linux", "sudoers"]
+
+[tool.poetry.dependencies]
+python = "^3.6"  # Compatible python versions must be declared here
+
+toml = "^0.9"
+
+[tool.poetry.dev-dependencies]
+bump2version = "*"
+codecov = "*"
+coverage = ">=4.4.2"
+fixtures = "*"
+flake8 = "*"
+green = ">=2.12.0"
+mock = ">=2.0.0"
+pydocstyle = "<4"
+pylama = "*"
+pylint = "*"
+testtools = "*"
+twine = "*"
+unittest2 = ">=1.1.0"
+wheel = "*"
+yamllint = "*"
