@@ -4,7 +4,7 @@ name: 'test_deploy'
 'on':
   push:
     branches:
-      - 'master'
+      - 'main'
 
 jobs:
   pypi_deploy:

@@ -2,8 +2,8 @@
 
 This library provides a [Python][1] interface to the Linux sudoers file.  python-sudoers is open sourced under the [BSD 3-Clause license](LICENSE.txt).
 
-[![CircleCI](https://circleci.com/gh/broadinstitute/python-sudoers/tree/master.svg?style=svg)](https://circleci.com/gh/broadinstitute/python-sudoers/tree/master)
-[![codecov](https://codecov.io/gh/broadinstitute/python-sudoers/branch/master/graph/badge.svg)](https://codecov.io/gh/broadinstitute/python-sudoers)
+[![CircleCI](https://circleci.com/gh/broadinstitute/python-sudoers/tree/main.svg?style=svg)](https://circleci.com/gh/broadinstitute/python-sudoers/tree/main)
+[![codecov](https://codecov.io/gh/broadinstitute/python-sudoers/branch/main/graph/badge.svg)](https://codecov.io/gh/broadinstitute/python-sudoers)
 
 ## Basics
 
@@ -126,10 +126,10 @@ Releases to the codebase are typically done using the [bump2version][5] tool.  T
 bump2version --verbose --no-tag patch
 ```
 
-Once the PR is merged, you can then checkout the new master branch and tag it using the new version number that is now in `.bumpversion.cfg`:
+Once the PR is merged, you can then checkout the new `main` branch and tag it using the new version number that is now in `.bumpversion.cfg`:
 
 ```sh
-git checkout master
+git checkout main
 git pull --rebase
 git tag 1.0.0 -m 'Bump version: 0.1.0 → 1.0.0'
 git push --tags
