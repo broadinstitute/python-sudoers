@@ -1,5 +1,25 @@
 # Changelog
 
+## [2.0.0](https://github.com/broadinstitute/python-sudoers/tree/2.0.0) (2020-11-02)
+
+[Full Changelog](https://github.com/broadinstitute/python-sudoers/compare/1.2.0...2.0.0)
+
+**Implemented enhancements:**
+
+- Move to GitHub Actions, bump version due to Python version update [\#12](https://github.com/broadinstitute/python-sudoers/pull/12) ([coreone](https://github.com/coreone))
+- Python version update, changelog [\#11](https://github.com/broadinstitute/python-sudoers/pull/11) ([coreone](https://github.com/coreone))
+- Fixed run as related parsing errors. [\#10](https://github.com/broadinstitute/python-sudoers/pull/10) ([Ian-Thorne](https://github.com/Ian-Thorne))
+- Fix Python versions for CircleCI, move to orb [\#8](https://github.com/broadinstitute/python-sudoers/pull/8) ([coreone](https://github.com/coreone))
+
+**Fixed bugs:**
+
+- Fix poetry in deploy workflows [\#13](https://github.com/broadinstitute/python-sudoers/pull/13) ([coreone](https://github.com/coreone))
+
+**Security fixes:**
+
+- Bump bleach from 3.1.2 to 3.1.4 [\#9](https://github.com/broadinstitute/python-sudoers/pull/9) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump bleach from 3.1.0 to 3.1.2 [\#7](https://github.com/broadinstitute/python-sudoers/pull/7) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 ## [1.2.0](https://github.com/broadinstitute/python-sudoers/tree/1.2.0) (2019-04-30)
 
 [Full Changelog](https://github.com/broadinstitute/python-sudoers/compare/1.1.0...1.2.0)

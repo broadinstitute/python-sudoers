@@ -108,6 +108,16 @@ docker run -it --rm \
     ferrarimarco/github-changelog-generator --verbose
 ```
 
+To generate the log for an upcoming release that has not yet been tagged, you can run a command to include the upcoming release version.  For example, `2.0.0`:
+
+```sh
+docker run -it --rm \
+    -e CHANGELOG_GITHUB_TOKEN='yourtokenhere' \
+    -v "$(pwd)":/working \
+    -w /working \
+    ferrarimarco/github-changelog-generator --verbose --future-release 2.0.0 --unreleased
+```
+
 ## Releases
 
 Releases to the codebase are typically done using the [bump2version][5] tool.  This tool takes care of updating the version in all necessary files, updating its own configuration, and making a GitHub commit and tag.  We typically do version bumps as part of a PR, so you don't want to have [bump2version][5] tag the version at the same time it does the commit as commit hashes may change.  Therefore, to bump the version a patch level, one would run the command:
