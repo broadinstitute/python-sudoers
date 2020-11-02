@@ -50,4 +50,4 @@ jobs:
         run: 'poetry build'
 
       - name: 'Publish package to PyPi'
-        run: 'poetry publish -r testpypi'
+        run: 'poetry publish --dry-run -r testpypi'
