@@ -38,19 +38,23 @@ class TestSudoers(TestCase):
 
         self.test_correct_rules = [
             {"users": ["SOMEUSERS"], "hosts": ["SOMEHOSTS"], "commands": [
-                {"run_as": ["SOMERUNAS"], "tags": None, "command": "SOMECMND"},
-            ]},
+                {"run_as": ["SOMERUNAS"], "tags": None, "command": "SOMECMND"},],
+             "original": "SOMEUSERS SOMEHOSTS=(SOMERUNAS) SOMECMND",
+            },
             {"users": ["SOMEUSERS"], "hosts": ["ALL"], "commands": [
-                {"run_as": ["SOMERUNAS"], "tags": None, "command": "/path/to/something/else"},
-            ]},
+                {"run_as": ["SOMERUNAS"], "tags": None, "command": "/path/to/something/else"},],
+             "original": "SOMEUSERS ALL=(SOMERUNAS) /path/to/something/else"
+            },
             {"users": ["SOMEUSERS"], "hosts": ["SOMEHOSTS"], "commands": [
                 {"run_as": ["ALL"], "tags": ["NOPASSWD"], "command": "/path/to/something/else"},
-                {"run_as": ["ALL"], "tags": ["NOPASSWD"], "command": "/path/to/more"},
-            ]},
+                {"run_as": ["ALL"], "tags": ["NOPASSWD"], "command": "/path/to/more"},],
+             "original": "SOMEUSERS SOMEHOSTS=(ALL) NOPASSWD:/path/to/something/else,/path/to/more",
+            },
             {"users": ["randouser"], "hosts": ["SOMEHOSTS"], "commands": [
                 {"run_as": ["SOMERUNAS"], "tags": None, "command": "SOMECMND"},
-                {"run_as": ["root"], "tags": None, "command": "/path/to/more/things"},
-            ]}
+                {"run_as": ["root"], "tags": None, "command": "/path/to/more/things"},],
+             "original": "randouser SOMEHOSTS=(SOMERUNAS) SOMECMND,(root)/path/to/more/things",
+            }
         ]
 
         self.fake_path = "/path/to/sudoers"
