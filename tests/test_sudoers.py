@@ -135,7 +135,10 @@ class TestInit(TestSudoers):
         )
 
         # Check internal values for defaults
-        self.assertEqual(sudoobj._data["Defaults"], ["Defaults !insults", "Defaults:SOMEUSERS !umask"])
+        self.assertIn('scope', sudoobj._data["Defaults"][0])
+        self.assertIn('setting', sudoobj._data["Defaults"][0])
+        self.assertEqual(sudoobj._data["Defaults"], [{'scope': None, 'setting': "!insults"}, 
+            {'scope': ':SOMEUSERS', 'setting': "!umask"}])
         # Check internal values for rules
         self.assertEqual(sudoobj._data["Rules"], self.test_correct_rules)
 

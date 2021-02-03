@@ -13,7 +13,9 @@ This library provides a [Python][1] interface to the Linux sudoers file.  python
 
 This library parses a sudoers file into its component parts.  It's not 100% compliant with the EBNF format of the file (yet), but it's getting there.  Currently, the script parses out 6 distinct line types from the file:
 
-* Defaults (This is only a string currently.  Pieces of a Defaults setting are not parsed/separated.)
+* Defaults (List of dicts with these keys)
+  * scope  - if Defaults@xx, it's the @xxx part, None if none there.
+  * setting - the unparsed rest of the line.
 * Cmnd_Alias
 * Host_Alias
 * Runas_Alias
@@ -47,7 +49,8 @@ from pysudoers import Sudoers
 sobj = Sudoers(path="tmp/sudoers")
 
 for default in sobj.defaults:
-    print(default)
+    print(default.scope)
+    print(default.setting)
 
 for key in sobj.host_aliases:
     print(key)

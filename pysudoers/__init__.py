@@ -3,6 +3,7 @@
 
 import logging
 import re
+import shlex
 
 LOGGER = logging.getLogger(__name__)
 
@@ -13,7 +14,7 @@ class Sudoers(object):
     def __init__(self, path):
         """Initialize the class.
 
-        :param string path: The path to the sudoers file
+        :param string path: The path to the sudoers file or file-like object
         """
         self._alias_types = ["Cmnd_Alias", "Host_Alias", "Runas_Alias", "User_Alias"]
 
@@ -80,15 +81,32 @@ class Sudoers(object):
         if (len(keyval) != 2) or (not keyval[1]):
             raise BadAliasException("bad alias: %s" % line)
 
-        # Separate the comma-separated list of values
-        val_list = keyval[1].split(",")
+        # Separate the comma-separated list of values, respecting quotes
+        lex = shlex.shlex(keyval[1], posix=True, punctuation_chars=True)
+        lex.wordchars += '%'
+        val_list = list(lex)
+        terms = []
         if not val_list:
             raise BadAliasException("bad alias: %s" % line)
-        # Make sure extra whitespace is stripped for each item in the list, then convert back to a list
-        val_list = list(map(str.strip, val_list))
-
+        lastterm = ','
+        cmnd = ''
+        for term in val_list:
+            # terms looks like:  ['user1', ',' 'user2', 'host1', ',', 'host2]
+            # start saving users.  Ignore commas.
+            # if term is not a coma and lastterm is not a comma, start saving to hosts
+            if lastterm != ',' and term != ',':
+                cmnd += ' '
+            elif term == ',':
+                terms.append(cmnd)
+                cmnd = ''
+                lastterm = term
+                continue
+            cmnd += term
+            lastterm = term
+        if cmnd != '':
+            terms.append(cmnd)
         # Return a tuple with the key / value pair
-        return (keyval[0], val_list)
+        return (keyval[0], terms)
 
     @staticmethod
     def parse_commands(commands):  # pylint: disable-msg=too-many-locals
@@ -185,6 +203,7 @@ class Sudoers(object):
         """
         rule_re = re.compile(r"([\S\s]*)=([\S\s]*)")
         rule = {}
+        rule['original'] = line
 
         # Do a basic check for rule syntax
         match = rule_re.search(line)
@@ -192,15 +211,51 @@ class Sudoers(object):
             raise BadRuleException("invalid rule: %s" % line)
 
         # Split to the left of the = into user and host parts
-        pieces = match.group(1).split()
+        (userhost, cmndinfo) = re.split(r'''\s*?=\s*''', line, 1)
 
-        rule["users"] = pieces[0].split(",")
-        rule["hosts"] = pieces[1].split(",")
+        lex = shlex.shlex(userhost, posix=True, punctuation_chars=True)
+        lex.wordchars += '.%'
+        terms = list(lex)
+        rule["users"] = []
+        rule["hosts"] = []
+        key = "users"
+        lastterm = ','
+        for term in terms:
+            # terms looks like:  ['user1', ',' 'user2', 'host1', ',', 'host2]
+            # start saving users.  Ignore commas.
+            # if term is not a coma and lastterm is not a comma, start saving to hosts
+            if lastterm != ',' and term != ',':
+                key = 'hosts'
+            elif term == ',':
+                lastterm = term
+                continue
+            rule[key].append(term)
+            lastterm = term
 
         # Parse the commands
-        rule["commands"] = self.parse_commands(match.group(2))
+        rule["commands"] = self.parse_commands(cmndinfo)
 
         return rule
+
+    def parse_defaults(self, line):
+        """Parse the defaults into component pieces.
+            Defaults[@user] setting
+            Returns a list of dicts.  dict has two components.
+                user: string
+                setting: string
+        """
+        defaults_re = re.compile(r'''^Defaults # line starts with word default
+                                    ([!@>:]\S+)?    # has optional scope
+                                    \s+        # whitespace
+                                    (.*)       # the rest of the line
+                                 $''', re.X)
+        pieces = defaults_re.split(line, maxsplit=1)  # one split leaves two parts
+        return dict(
+            {
+                'scope': pieces[1],
+                'setting': pieces[2]
+            }
+        )
 
     def parse_line(self, line):
         """Parse one line of the sudoers file.
@@ -213,7 +268,9 @@ class Sudoers(object):
         # Trim unnecessary spaces (no spaces before/after commas, colons, and equals signs)
         line = re.sub(r"\s*([,:=])\s*", r"\g<1>", line)
 
-        pieces = line.split()
+        lex = shlex.shlex(line, posix=True, punctuation_chars=True)
+        lex.whitespace += ','
+        pieces = shlex.split(line)
         if pieces[0] in self._alias_types:
             index = pieces[0]
 
@@ -229,7 +286,8 @@ class Sudoers(object):
             # Debugging output
             logging.info("%s: %s => %s", index, key, members)
         elif defaults_re.search(line):
-            self._data["Defaults"].append(line)
+            default = self.parse_defaults(line)
+            self._data["Defaults"].append(default)
         else:
             # Everything that doesn't match the above aliases is assumed to be a rule
             rule = self.parse_rule(line)
@@ -243,7 +301,10 @@ class Sudoers(object):
         """
         backslash_re = re.compile(r"\\$")
 
-        sudo = open(self._path, "r")
+        if hasattr(self._path, 'write'):
+            sudo = self._path
+        else:
+            sudo = open(self._path, "r")
 
         for line in sudo:
             # Strip whitespace from beginning and end
