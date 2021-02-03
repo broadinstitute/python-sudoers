@@ -301,7 +301,9 @@ class Sudoers(object):
         """
         backslash_re = re.compile(r"\\$")
 
-        if hasattr(self._path, 'write'):
+        # if _path has the 'read' attribute, it's assumed to be a file handle
+        # otherwise, it's a name.
+        if hasattr(self._path, 'read'):
             sudo = self._path
         else:
             sudo = open(self._path, "r")
