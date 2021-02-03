@@ -237,7 +237,8 @@ class Sudoers(object):
 
         return rule
 
-    def parse_defaults(self, line):
+    @staticmethod
+    def parse_defaults(line):
         """Parse the defaults into component pieces.
             Defaults[@user] setting
             Returns a list of dicts.  dict has two components.
