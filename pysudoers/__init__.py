@@ -76,12 +76,12 @@ class Sudoers(object):
         kvline = re.sub(r"^%s\s*" % alias_key, "", line)
 
         # Split out the alias key/value
-        keyval = kvline.split("=")
+        keyval = escaped_split(kvline, "=", maxsplit=1)
         if (len(keyval) != 2) or (not keyval[1]):
             raise BadAliasException("bad alias: %s" % line)
 
         # Separate the comma-separated list of values
-        val_list = keyval[1].split(",")
+        val_list = escaped_split(keyval[1], ",")
         if not val_list:
             raise BadAliasException("bad alias: %s" % line)
         # Make sure extra whitespace is stripped for each item in the list, then convert back to a list
@@ -334,3 +334,34 @@ class BadRuleException(Exception):
 
 class DuplicateAliasException(Exception):
     """Provide a custom exception type to be raised when an alias is malformed."""
+
+
+def escaped_split(s, delim, maxsplit=-1):
+    """Split a string s on delim, stopping after maxsplit. If maxsplit is 0
+    then no splitting will be applied. If maxsplit > 0 then up to maxsplit
+    fields will be split.  Otherwise if maxsplit is negative, the default, no
+    limit is applied to the number of fields split. """
+    field = []
+    buf = []
+    itr = iter(s)
+    for ch in itr:
+        if maxsplit == 0:
+            buf.append(ch)
+        elif ch == '\\':
+            try:
+                buf.append('\\')
+                buf.append(next(itr))
+            except StopIteration:
+                pass
+        elif ch == delim:
+            field.append(''.join(buf))
+            buf = []
+            if maxsplit > 0:
+                maxsplit -= 1
+        else:
+            buf.append(ch)
+
+    if len(buf) != 0:
+        field.append(''.join(buf))
+
+    return field
