@@ -82,7 +82,7 @@ class TestInit(TestSudoers):
         """Parameters are set correctly inside the class using defaults."""
         # Mock out "open" so we don't actually open a file
         mopen = self.get_mock_open()
-        with mock.patch(self.open_patch_id, mopen) as mock_file:  # pylint: disable=unused-variable
+        with mock.patch(self.open_patch_id, mopen) as mock_file:
             sudoobj = Sudoers(path=self.fake_path)
             mock_file.assert_called_with(self.fake_path, "r", encoding="ascii")
 
@@ -95,7 +95,7 @@ class TestInit(TestSudoers):
         alias_names = ["Cmnd_Alias", "Host_Alias", "Runas_Alias", "User_Alias"]
 
         mopen = self.get_mock_open()
-        with mock.patch(self.open_patch_id, mopen) as mock_file:  # pylint: disable=unused-variable
+        with mock.patch(self.open_patch_id, mopen) as mock_file:
             sudoobj = Sudoers(path=self.fake_path)
             mock_file.assert_called_with(self.fake_path, "r", encoding="ascii")
 
@@ -106,7 +106,7 @@ class TestInit(TestSudoers):
         """Internal _data key structure is setup correctly."""
         # Mock out "open" so we don't actually open a file
         mopen = self.get_mock_open()
-        with mock.patch(self.open_patch_id, mopen) as mock_file:  # pylint: disable=unused-variable
+        with mock.patch(self.open_patch_id, mopen) as mock_file:
             sudoobj = Sudoers(path=self.fake_path)
             mock_file.assert_called_with(self.fake_path, "r", encoding="ascii")
 
@@ -194,7 +194,7 @@ class TestParser(TestSudoers):
         # Find the path to the test sudoers file
         data = "Host_Alias\n"
         mopen = self.get_mock_open(data)
-        with mock.patch(self.open_patch_id, mopen, create=True) as mock_file:  # pylint: disable=unused-variable
+        with mock.patch(self.open_patch_id, mopen, create=True) as _:
             self.assertRaises(BadAliasException, Sudoers, path=self.fake_path)
 
     def test_bad_alias2(self):
@@ -202,7 +202,7 @@ class TestParser(TestSudoers):
         # Find the path to the test sudoers file
         data = "Runas_Alias SOMERUNAS=\n"
         mopen = self.get_mock_open(data)
-        with mock.patch(self.open_patch_id, mopen) as mock_file:  # pylint: disable=unused-variable
+        with mock.patch(self.open_patch_id, mopen) as _:
             self.assertRaises(BadAliasException, Sudoers, path=self.fake_path)
 
     def test_dup_alias(self):
@@ -213,7 +213,7 @@ class TestParser(TestSudoers):
         Host_Alias SOMEHOSTS=host3, host4
         """
         mopen = self.get_mock_open(data)
-        with mock.patch(self.open_patch_id, mopen) as mock_file:  # pylint: disable=unused-variable
+        with mock.patch(self.open_patch_id, mopen) as _:
             self.assertRaises(DuplicateAliasException, Sudoers, path=self.fake_path)
 
     def test_bad_rule(self):
@@ -221,7 +221,7 @@ class TestParser(TestSudoers):
         # Find the path to the test sudoers file
         data = "SOMEUSERS SOMEHOSTS (SOMERUNAS) SOMECMND\n"
         mopen = self.get_mock_open(data)
-        with mock.patch(self.open_patch_id, mopen) as mock_file:  # pylint: disable=unused-variable
+        with mock.patch(self.open_patch_id, mopen) as _:
             self.assertRaises(BadRuleException, Sudoers, path=self.fake_path)
 
     def test_escaped_split(self):
@@ -236,7 +236,7 @@ class TestParser(TestSudoers):
             ]
         }
         mopen = self.get_mock_open(data)
-        with mock.patch(self.open_patch_id, mopen) as mock_file:  # pylint: disable=unused-variable
+        with mock.patch(self.open_patch_id, mopen) as _:
             sudoobj = Sudoers(path=self.fake_path)
             self.assertEqual(sudoobj.cmnd_aliases, result)
 
@@ -248,7 +248,7 @@ class TestResolution(TestSudoers):
         """Test resolving an alias with no nested aliases."""
         data = "Cmnd_Alias SECONDCMDS=/path/to/second/cmd"
         mopen = self.get_mock_open(data)
-        with mock.patch(self.open_patch_id, mopen) as mock_file:  # pylint: disable=unused-variable
+        with mock.patch(self.open_patch_id, mopen) as _:
             sudoobj = Sudoers(path=self.fake_path)
             res = sudoobj._resolve_aliases("Cmnd_Alias", "SECONDCMDS")
             self.assertEqual(res, ['/path/to/second/cmd'])
@@ -261,7 +261,7 @@ class TestResolution(TestSudoers):
             Cmnd_Alias SECONDCMDS=/path/to/second/cmd
         """
         mopen = self.get_mock_open(data)
-        with mock.patch(self.open_patch_id, mopen) as mock_file:  # pylint: disable=unused-variable
+        with mock.patch(self.open_patch_id, mopen) as _:
             sudoobj = Sudoers(path=self.fake_path)
             res1 = sudoobj._resolve_aliases("Cmnd_Alias", "CMDALIAS")
             res2 = sudoobj._resolve_aliases("Cmnd_Alias", "FIRSTCMDS")
@@ -278,7 +278,7 @@ class TestResolution(TestSudoers):
             Cmnd_Alias SECONDCMDS=/path/to/second/cmd
         """
         mopen = self.get_mock_open(data)
-        with mock.patch(self.open_patch_id, mopen) as mock_file:  # pylint: disable=unused-variable
+        with mock.patch(self.open_patch_id, mopen) as _:
             sudoobj = Sudoers(path=self.fake_path)
             res1 = sudoobj._resolve_aliases("Cmnd_Alias", "CMDALIAS")
             res2 = sudoobj._resolve_aliases("Cmnd_Alias", "FIRSTCMDS")
@@ -296,7 +296,7 @@ class TestResolution(TestSudoers):
         User_Alias SOMEUSERS=user3, user4
         """
         mopen = self.get_mock_open(data)
-        with mock.patch(self.open_patch_id, mopen) as mock_file:  # pylint: disable=unused-variable
+        with mock.patch(self.open_patch_id, mopen) as _:
             sudoobj = Sudoers(path=self.fake_path)
             cmnd_res = sudoobj.resolve_command("SOMECMDS")
             host_res = sudoobj.resolve_host("SOMEHOSTS")
