@@ -84,7 +84,7 @@ class TestInit(TestSudoers):
         mopen = self.get_mock_open()
         with mock.patch(self.open_patch_id, mopen) as mock_file:  # pylint: disable=unused-variable
             sudoobj = Sudoers(path=self.fake_path)
-            mock_file.assert_called_with(self.fake_path, "r")
+            mock_file.assert_called_with(self.fake_path, "r", encoding="ascii")
 
             # Check all the internal values
             self.assertEqual(sudoobj._path, self.fake_path)
@@ -97,7 +97,7 @@ class TestInit(TestSudoers):
         mopen = self.get_mock_open()
         with mock.patch(self.open_patch_id, mopen) as mock_file:  # pylint: disable=unused-variable
             sudoobj = Sudoers(path=self.fake_path)
-            mock_file.assert_called_with(self.fake_path, "r")
+            mock_file.assert_called_with(self.fake_path, "r", encoding="ascii")
 
             # Check all the internal values
             self.assertEqual(sudoobj._alias_types, alias_names)
@@ -108,7 +108,7 @@ class TestInit(TestSudoers):
         mopen = self.get_mock_open()
         with mock.patch(self.open_patch_id, mopen) as mock_file:  # pylint: disable=unused-variable
             sudoobj = Sudoers(path=self.fake_path)
-            mock_file.assert_called_with(self.fake_path, "r")
+            mock_file.assert_called_with(self.fake_path, "r", encoding="ascii")
 
             # Check all the internal values
             for alias in sudoobj._alias_types:
