@@ -73,17 +73,17 @@ class Sudoers(object):
         :rtype: tuple
         """
         # We need to keep all line spacing, so use the original line with the index stripped
-        kvline = re.sub(r"^%s\s*" % alias_key, "", line)
+        kvline = re.sub(rf"^{alias_key}\s*", "", line)
 
         # Split out the alias key/value
         keyval = escaped_split(kvline, "=", maxsplit=1)
         if (len(keyval) != 2) or (not keyval[1]):
-            raise BadAliasException("bad alias: %s" % line)
+            raise BadAliasException(f"bad alias: {line}")
 
         # Separate the comma-separated list of values
         val_list = escaped_split(keyval[1], ",")
         if not val_list:
-            raise BadAliasException("bad alias: %s" % line)
+            raise BadAliasException(f"bad alias: {line}")
         # Make sure extra whitespace is stripped for each item in the list, then convert back to a list
         val_list = list(map(str.strip, val_list))
 
@@ -116,7 +116,7 @@ class Sudoers(object):
 
         # split the commands along commas without splitting users/groups inside run as parenthesis
         # ex: "root ALL = (ALL, ALL) ALL" shouldn't be split along the comma in parenthesis
-        cmds = list()
+        cmds = []
         in_parens = False
         curr_string = ""
         for char in commands:
@@ -189,7 +189,7 @@ class Sudoers(object):
         # Do a basic check for rule syntax
         match = rule_re.search(line)
         if not match:
-            raise BadRuleException("invalid rule: %s" % line)
+            raise BadRuleException(f"invalid rule: {line}")
 
         # Split to the left of the = into user and host parts
         pieces = match.group(1).split()
@@ -219,11 +219,11 @@ class Sudoers(object):
 
             # Raise an exception if there aren't at least 2 elements after the split
             if len(pieces) < 2:
-                raise BadAliasException("bad alias: %s" % line)
+                raise BadAliasException(f"bad alias: {line}")
 
             (key, members) = self.parse_alias(index, line)
             if key in self._data[index]:
-                raise DuplicateAliasException("duplicate alias: %s" % line)
+                raise DuplicateAliasException(f"duplicate alias: {line}")
 
             self._data[index][key] = members
             # Debugging output
@@ -243,38 +243,35 @@ class Sudoers(object):
         """
         backslash_re = re.compile(r"\\$")
 
-        sudo = open(self._path, "r")
+        with open(self._path, "r", encoding="ascii") as sudo:
+            for line in sudo:
+                # Strip whitespace from beginning and end
+                line = line.strip()
+                # Ignore all comments
+                if line.startswith("#"):
+                    continue
+                # Ignore all empty lines
+                if not line:
+                    continue
 
-        for line in sudo:
-            # Strip whitespace from beginning and end
-            line = line.strip()
-            # Ignore all comments
-            if line.startswith("#"):
-                continue
-            # Ignore all empty lines
-            if not line:
-                continue
+                if backslash_re.search(line):
+                    concatline = line.rstrip("\\")
+                    while True:
+                        # Get the next line from the file
+                        nextline = next(sudo).strip()
+                        # Make sure we don't go past EOF
+                        if not nextline:
+                            break
+                        # Add the next line to the previous line
+                        concatline += nextline.rstrip("\\")
+                        # Break when the next line doesn't end with a backslash
+                        if not backslash_re.search(nextline):
+                            break
 
-            if backslash_re.search(line):
-                concatline = line.rstrip("\\")
-                while True:
-                    # Get the next line from the file
-                    nextline = next(sudo).strip()
-                    # Make sure we don't go past EOF
-                    if not nextline:
-                        break
-                    # Add the next line to the previous line
-                    concatline += nextline.rstrip("\\")
-                    # Break when the next line doesn't end with a backslash
-                    if not backslash_re.search(nextline):
-                        break
+                    line = concatline
 
-                line = concatline
-
-            logging.debug(line)
-            self.parse_line(line)
-
-        sudo.close()
+                logging.debug(line)
+                self.parse_line(line)
 
     def _resolve_aliases(self, alias_type, name):
         """For the provided alias type, resolve the provided name for any aliases that may exist.
