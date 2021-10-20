@@ -224,6 +224,22 @@ class TestParser(TestSudoers):
         with mock.patch(self.open_patch_id, mopen) as mock_file:  # pylint: disable=unused-variable
             self.assertRaises(BadRuleException, Sudoers, path=self.fake_path)
 
+    def test_escaped_split(self):
+        """A command alias with embedded commas and escaped charaters will be correctly split."""
+        # Find the path to the test sudoers file
+        data = r"Cmnd_Alias AUDIT_CMDS = /bin/awk -F\: {OFS=FS; print "
+        data += r"$1\,substr($2\,1\,4)\,$3\,$4\,$5\,$6\,$7\,$8\,$9} /var/log/audit.log"
+        result = {
+            "AUDIT_CMDS": [
+                "/bin/awk -F\\:{OFS=FS; print " +
+                "$1\\,substr($2\\,1\\,4)\\,$3\\,$4\\,$5\\,$6\\,$7\\,$8\\,$9} /var/log/audit.log"
+            ]
+        }
+        mopen = self.get_mock_open(data)
+        with mock.patch(self.open_patch_id, mopen) as mock_file:  # pylint: disable=unused-variable
+            sudoobj = Sudoers(path=self.fake_path)
+            self.assertEqual(sudoobj.cmnd_aliases, result)
+
 
 class TestResolution(TestSudoers):
     """Test the alias resolution methods."""
