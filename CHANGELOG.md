@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.1.0](https://github.com/broadinstitute/python-sudoers/tree/2.1.0) (2022-01-13)
+
+[Full Changelog](https://github.com/broadinstitute/python-sudoers/compare/2.0.1...2.1.0)
+
+**Fixed bugs:**
+
+- Python updates [\#38](https://github.com/broadinstitute/python-sudoers/pull/38) ([coreone](https://github.com/coreone))
+
 ## [2.0.1](https://github.com/broadinstitute/python-sudoers/tree/2.0.1) (2021-10-20)
 
 [Full Changelog](https://github.com/broadinstitute/python-sudoers/compare/2.0.0...2.0.1)
