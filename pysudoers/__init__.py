@@ -268,43 +268,30 @@ class Sudoers(object):
             rule = self.parse_rule(line)
             self._data["Rules"].append(rule)
 
+    def parse_from_io(self, f: TextIOWrapper):
+        while True:
+            line = f.readline()
+            if not line:
+                break
+            line = line.strip()
+            # skip comment and blank line
+            if not line or line.startswith("#"):
+                continue
+
+            concatline = ''
+            while True:
+                concatline += line.rstrip("\\")
+                if not line.endswith('\\'):
+                    break
+                # read next line from file
+                line = f.readline().strip()
+
+            logging.debug(concatline)
+            self.parse_line(concatline)
+
     def parse_file(self):
-        """Parse the sudoers file.
-
-        Parse the entire sudoers file.  The results are stored in the internal *_data* member.  There is no return
-        value from this function.
-        """
-        backslash_re = re.compile(r"\\$")
-
-        with open(self._path, "r", encoding="ascii") as sudo:
-            for line in sudo:
-                # Strip whitespace from beginning and end
-                line = line.strip()
-                # Ignore all comments
-                if line.startswith("#"):
-                    continue
-                # Ignore all empty lines
-                if not line:
-                    continue
-
-                if backslash_re.search(line):
-                    concatline = line.rstrip("\\")
-                    while True:
-                        # Get the next line from the file
-                        nextline = next(sudo).strip()
-                        # Make sure we don't go past EOF
-                        if not nextline:
-                            break
-                        # Add the next line to the previous line
-                        concatline += nextline.rstrip("\\")
-                        # Break when the next line doesn't end with a backslash
-                        if not backslash_re.search(nextline):
-                            break
-
-                    line = concatline
-
-                logging.debug(line)
-                self.parse_line(line)
+        with open(self._path, "r", encoding="ascii") as f:
+            self.parse_from_io(f)
 
     def _resolve_aliases(self, alias_type, name):
         """For the provided alias type, resolve the provided name for any aliases that may exist.
