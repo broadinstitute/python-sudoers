@@ -29,6 +29,8 @@ As user specifications are the most complicated, they are most likely the area t
   * Run As notations
   * Commands
 
+One caveat to add is, this module currently does not do anything with `#include`, `#includedir`, `@include` and `@includedir` lines, but simply ignores them. You can, however, parse any included files individually if needed, but any interdependencies between the files will not be resolved.
+
 ## Installing
 
 You can use pip to install pysudoers:
