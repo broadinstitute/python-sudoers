@@ -240,6 +240,38 @@ class TestParser(TestSudoers):
             sudoobj = Sudoers(path=self.fake_path)
             self.assertEqual(sudoobj.cmnd_aliases, result)
 
+    def test_hash_include(self):
+        """An include with a hash will not cause an exception."""
+        # Find the path to the test sudoers file
+        data = "#include /test/dir/file\n"
+        mopen = self.get_mock_open(data)
+        with mock.patch(self.open_patch_id, mopen) as _:
+            _ = Sudoers(path=self.fake_path)
+
+    def test_at_include(self):
+        """An include with an @ will not cause an exception."""
+        # Find the path to the test sudoers file
+        data = "@include /test/dir/file\n"
+        mopen = self.get_mock_open(data)
+        with mock.patch(self.open_patch_id, mopen) as _:
+            _ = Sudoers(path=self.fake_path)
+
+    def test_hash_includedir(self):
+        """An includedir with a hash will not cause an exception."""
+        # Find the path to the test sudoers file
+        data = "#includedir /test/dir/file\n"
+        mopen = self.get_mock_open(data)
+        with mock.patch(self.open_patch_id, mopen) as _:
+            _ = Sudoers(path=self.fake_path)
+
+    def test_at_includedir(self):
+        """An includedir with an @ will not cause an exception."""
+        # Find the path to the test sudoers file
+        data = "@includedir /test/dir/file\n"
+        mopen = self.get_mock_open(data)
+        with mock.patch(self.open_patch_id, mopen) as _:
+            _ = Sudoers(path=self.fake_path)
+
 
 class TestResolution(TestSudoers):
     """Test the alias resolution methods."""

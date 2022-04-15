@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 """Manage a sudoers file."""
-
 import logging
 import re
 
@@ -217,7 +216,12 @@ class Sudoers(object):
         :rtype: dict
         """
         rule_re = re.compile(r"([\S\s]*)=([\S\s]*)")
+        include_re = re.compile(r"^(@|#)include(dir)?\s+")
         rule = {}
+
+        # Ignore includes for now
+        if include_re.search(line):
+            return []
 
         # Do a basic check for rule syntax
         match = rule_re.search(line)
