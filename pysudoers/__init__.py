@@ -6,7 +6,7 @@ import re
 LOGGER = logging.getLogger(__name__)
 
 
-class Sudoers(object):
+class Sudoers:
     """Provide methods for dealing with all aspects of a sudoers file."""
 
     def __init__(self, path):
