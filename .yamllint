@@ -1,5 +1,7 @@
 ---
 extends: default
+ignore: |
+  .venv/
 rules:
   indentation:
     spaces: 2
