@@ -3,7 +3,7 @@
 # Don't warn about things that happen as that is part of unit testing
 # pylint: disable=protected-access
 
-import os
+from pathlib import Path
 import sys
 from textwrap import dedent
 
@@ -32,9 +32,9 @@ class TestSudoers(TestCase):
             self.open_patch_id = "__builtin__.open"
 
         # Find the path to the test sudoers file
-        pwd = os.path.dirname(__file__)
-        self.test_data_dir = os.path.join(pwd, "data")
-        self.test_correct_file = os.path.join(self.test_data_dir, "correct.txt")
+        pwd = Path(__file__).resolve().parent
+        self.test_data_dir = pwd / "data"
+        self.test_correct_file = self.test_data_dir / "correct.txt"
 
         self.test_correct_rules = [
             {"users": ["SOMEUSERS"], "hosts": ["SOMEHOSTS"], "commands": [
