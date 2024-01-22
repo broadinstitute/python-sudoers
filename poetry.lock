@@ -403,12 +403,12 @@ test = ["mock", "testtools"]
 
 [[package]]
 name = "green"
-version = "3.4.3"
+version = "3.5.0"
 description = "Green is a clean, colorful, fast python test runner."
 optional = false
-python-versions = "*"
+python-versions = ">=3.6"
 files = [
-    {file = "green-3.4.3.tar.gz", hash = "sha256:8865d0b77b5cb13851dd601a58ad2c82bcb52da7ca106f0538c5787f127368a6"},
+    {file = "green-3.5.0.tar.gz", hash = "sha256:babf16d5c814e10d6e7260b0ee508ea3e6e5fb04ca1fa776bd96f71a48f5bbb9"},
 ]
 
 [package.dependencies]
