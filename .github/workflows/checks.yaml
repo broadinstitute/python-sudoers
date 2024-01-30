@@ -13,6 +13,6 @@ jobs:
   linting:
     uses: broadinstitute/shared-workflows/.github/workflows/python-lint.yaml@v2.0.0
   unit-tests:
-    uses: broadinstitute/shared-workflows/.github/workflows/python-unit-test.yaml@v2.0.0
+    uses: broadinstitute/shared-workflows/.github/workflows/python-unit-test.yaml@tex_green
     with:
       python_package_name: pysudoers
