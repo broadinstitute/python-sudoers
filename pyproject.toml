@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "pysudoers"
-version = "2.1.0"
+version = "2.2.0"
 description = "Python interface to the Linux sudoers file"
 license = "BSD-3-Clause"
 authors = ["Andrew Teixeira <teixeira@broadinstitute.org>"]
@@ -14,21 +14,18 @@ homepage = "https://github.com/broadinstitute/python-sudoers.git"
 keywords = ["linux", "sudoers"]
 
 [tool.poetry.dependencies]
-python = "^3.7"  # Compatible python versions must be declared here
+python = "^3.9"  # Compatible python versions must be declared here
 
-toml = ">=0.9,<0.11"
+toml = "^0.10.2"
 
 [tool.poetry.dev-dependencies]
-bump2version = "*"
-coverage = ">=4.4.2"
-fixtures = "*"
-green = ">=2.12.0"
-mock = ">=2.0.0"
-pydocstyle = "<7"
-pylama = "*"
-pylint = "*"
-testtools = "*"
-twine = "*"
-unittest2 = ">=1.1.0"
-wheel = "*"
-yamllint = "*"
+bump2version = "^1.0.1"
+coverage = "^7.6.1"
+green = "^4.0.0"
+mock = "^5.1.0"
+pydocstyle = "^6.3.0"
+pylama = "^8.4.1"
+pylint = "^3.3.1"
+testtools = "^2.7.2"
+unittest2 = "^1.1.0"
+yamllint = "^1.35.1"
