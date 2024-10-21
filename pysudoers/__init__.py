@@ -280,7 +280,7 @@ class Sudoers:
         """
         backslash_re = re.compile(r"\\$")
 
-        with open(self._path, "r", encoding="ascii") as sudo:
+        with open(self._path, "r", encoding="utf-8") as sudo:
             for line in sudo:
                 # Strip whitespace from beginning and end
                 line = line.strip()
