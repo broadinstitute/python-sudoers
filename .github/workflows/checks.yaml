@@ -9,10 +9,10 @@ name: 'checks'
 jobs:
 
   pre-commit:
-    uses: broadinstitute/shared-workflows/.github/workflows/pre-commit.yaml@v2.3.0
+    uses: broadinstitute/shared-workflows/.github/workflows/pre-commit.yaml@v2.4.0
   linting:
-    uses: broadinstitute/shared-workflows/.github/workflows/python-lint.yaml@v2.3.0
+    uses: broadinstitute/shared-workflows/.github/workflows/python-lint.yaml@v2.4.0
   unit-tests:
-    uses: broadinstitute/shared-workflows/.github/workflows/python-unit-test.yaml@v2.3.0
+    uses: broadinstitute/shared-workflows/.github/workflows/python-unit-test.yaml@v2.4.0
     with:
       python_package_name: pysudoers
