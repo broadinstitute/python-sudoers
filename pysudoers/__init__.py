@@ -1,7 +1,11 @@
-# -*- coding: utf-8 -*-
 """Manage a sudoers file."""
+
+from __future__ import annotations
+
 import logging
 import re
+from pathlib import Path
+from typing import ClassVar
 
 LOGGER = logging.getLogger(__name__)
 
@@ -9,62 +13,74 @@ LOGGER = logging.getLogger(__name__)
 class Sudoers:
     """Provide methods for dealing with all aspects of a sudoers file."""
 
-    def __init__(self, path):
-        """Initialize the class.
+    ALIAS_TYPES: ClassVar[list[str]] = [
+        "Cmnd_Alias",
+        "Host_Alias",
+        "Runas_Alias",
+        "User_Alias",
+    ]
+    MIN_LINE_PIECES: ClassVar[int] = 2
+
+    def __init__(self, path: str | Path) -> None:
+        """
+        Initialize the class.
 
         :param string path: The path to the sudoers file
         """
-        self._alias_types = ["Cmnd_Alias", "Host_Alias", "Runas_Alias", "User_Alias"]
-
-        self._path = path
+        if isinstance(path, Path):
+            self._path = path.resolve()
+        else:
+            self._path = Path(path).resolve()
 
         # Initialize the internal _data data member
         self._data = {}
         self._data["Defaults"] = []
         self._data["Rules"] = []
-        for alias in self._alias_types:
+        for alias in self.ALIAS_TYPES:
             self._data[alias] = {}
 
         self.parse_file()
 
     @property
-    def cmnd_aliases(self):
+    def cmnd_aliases(self) -> list:
         """Return the command aliases."""
         return self._data["Cmnd_Alias"]
 
     @property
-    def defaults(self):
+    def defaults(self) -> list:
         """Return any Defaults."""
         return self._data["Defaults"]
 
     @property
-    def host_aliases(self):
+    def host_aliases(self) -> list:
         """Return the host aliases."""
         return self._data["Host_Alias"]
 
     @property
-    def path(self):
-        """Return the path to the sudoers file."""
+    def path(self) -> Path:
+        """Return the path to the sudoers file as a pathlib.Path object."""
         return self._path
 
     @property
-    def rules(self):
+    def rules(self) -> list:
         """Return the rules."""
         return self._data["Rules"]
 
     @property
-    def runas_aliases(self):
+    def runas_aliases(self) -> list:
         """Return the run as aliases."""
         return self._data["Runas_Alias"]
 
     @property
-    def user_aliases(self):
+    def user_aliases(self) -> list:
         """Return the user aliases."""
         return self._data["User_Alias"]
 
     @classmethod
-    def parse_alias(cls, alias_key, line):
-        """Parse an alias line into its component parts.
+    def parse_alias(cls, alias_key: str, line: str) -> tuple:
+        """
+        Parse an alias line into its component parts.
+
         :param str alias_key: The type of alias we are parsing
         :param str line: The line from sudoers
 
@@ -76,13 +92,15 @@ class Sudoers:
 
         # Split out the alias key/value
         keyval = cls.escaped_split(kvline, "=", maxsplit=1)
-        if (len(keyval) != 2) or (not keyval[1]):
-            raise BadAliasException(f"bad alias: {line}")
+        if (len(keyval) != cls.MIN_LINE_PIECES) or (not keyval[1]):
+            errmsg = f"bad alias: {line}"
+            raise BadAliasExceptionError(errmsg)
 
         # Separate the comma-separated list of values
         val_list = cls.escaped_split(keyval[1], ",")
         if not val_list:
-            raise BadAliasException(f"bad alias: {line}")
+            errmsg = f"bad alias: {line}"
+            raise BadAliasExceptionError(errmsg)
         # Make sure extra whitespace is stripped for each item in the list, then convert back to a list
         val_list = list(map(str.strip, val_list))
 
@@ -90,8 +108,9 @@ class Sudoers:
         return (keyval[0], val_list)
 
     @staticmethod
-    def parse_commands(commands):  # pylint: disable-msg=too-many-locals
-        """Parse all commands from a rule line.
+    def parse_commands(commands: str) -> list:  # pylint: disable-msg=too-many-locals
+        """
+        Parse all commands from a rule line.
 
         Given a portion of a user specification (rule) line representing the *commands* part of the rule, parse out
         the components and return the results as a list of dictionaries.  There will be one dictionary per command in
@@ -110,7 +129,7 @@ class Sudoers:
         # runas and tags are running collectors as they are inherited by later commands
         # runas starts as 'root' to account for any commands without an explicit run as list,
         # since they can only appear at the start, before the first explicit run as list
-        runas = ['root']
+        runas = ["root"]
         tags = None
 
         # split the commands along commas without splitting users/groups inside run as parenthesis
@@ -121,17 +140,16 @@ class Sudoers:
         for char in commands:
             if in_parens:
                 curr_string += char
-                if char == ')':
+                if char == ")":
                     in_parens = False
+            elif char == ",":
+                cmds.append(curr_string)
+                curr_string = ""
+            elif char == "(":
+                in_parens = True
+                curr_string += "("
             else:
-                if char == ',':
-                    cmds.append(curr_string)
-                    curr_string = ""
-                elif char == '(':
-                    in_parens = True
-                    curr_string += '('
-                else:
-                    curr_string += char
+                curr_string += char
         if curr_string != "":
             # add the last command
             cmds.append(curr_string)
@@ -148,12 +166,10 @@ class Sudoers:
                 tmp_data["run_as"] = list(filter(None, unfiltered_data))
                 # Keep track of the latest "run_as"
                 runas = tmp_data["run_as"]
-                # tmp["command"] = match.group(2)
                 tmp_command = match.group(2)
             else:
                 # Else, just treat this like a normal command
                 tmp_data["run_as"] = runas
-                # tmp["command"] = command
                 tmp_command = command
 
             # Now check for tags
@@ -172,8 +188,9 @@ class Sudoers:
         return data
 
     @staticmethod
-    def escaped_split(input_str, delim, maxsplit=-1):
-        """Split a string input_str on delim, stopping after maxsplit.
+    def escaped_split(input_str: str, delim: str, maxsplit: int = -1) -> list:
+        """
+        Split a string input_str on delim, stopping after maxsplit.
 
         If maxsplit is 0 then no splitting will be applied. If maxsplit > 0 then up to
         maxsplit fields will be split.  Otherwise if maxsplit is negative, the default, no
@@ -204,8 +221,9 @@ class Sudoers:
 
         return field
 
-    def parse_rule(self, line):
-        """Parse a rule line into its component parts.
+    def parse_rule(self, line: str) -> dict:
+        """
+        Parse a rule line into its component parts.
 
         Given a user specification (rule) line, parse out the components and return the results in a dictionary.  The
         keys of the returned dictionary will be *users*, *hosts*, and *commands*.
@@ -221,12 +239,13 @@ class Sudoers:
 
         # Ignore includes for now
         if include_re.search(line):
-            return []
+            return {}
 
         # Do a basic check for rule syntax
         match = rule_re.search(line)
         if not match:
-            raise BadRuleException(f"invalid rule: {line}")
+            errmsg = f"invalid rule: {line}"
+            raise BadRuleExceptionError(errmsg)
 
         # Split to the left of the = into user and host parts
         pieces = match.group(1).split()
@@ -239,8 +258,9 @@ class Sudoers:
 
         return rule
 
-    def parse_line(self, line):
-        """Parse one line of the sudoers file.
+    def parse_line(self, line: str) -> None:
+        """
+        Parse one line of the sudoers file.
 
         Take one line from the sudoers file and parse it.  The contents of the line are stored in the internal
         *_data* member according to the type of the line.  There is no return value from this function.
@@ -251,16 +271,18 @@ class Sudoers:
         line = re.sub(r"\s*([,:=])\s*", r"\g<1>", line)
 
         pieces = line.split()
-        if pieces[0] in self._alias_types:
+        if pieces[0] in self.ALIAS_TYPES:
             index = pieces[0]
 
             # Raise an exception if there aren't at least 2 elements after the split
-            if len(pieces) < 2:
-                raise BadAliasException(f"bad alias: {line}")
+            if len(pieces) < self.MIN_LINE_PIECES:
+                errmsg = f"bad alias: {line}"
+                raise BadAliasExceptionError(errmsg)
 
             (key, members) = self.parse_alias(index, line)
             if key in self._data[index]:
-                raise DuplicateAliasException(f"duplicate alias: {line}")
+                errmsg = f"duplicate alias: {line}"
+                raise DuplicateAliasExceptionError(errmsg)
 
             self._data[index][key] = members
             # Debugging output
@@ -272,27 +294,28 @@ class Sudoers:
             rule = self.parse_rule(line)
             self._data["Rules"].append(rule)
 
-    def parse_file(self):
-        """Parse the sudoers file.
+    def parse_file(self) -> None:
+        """
+        Parse the sudoers file.
 
         Parse the entire sudoers file.  The results are stored in the internal *_data* member.  There is no return
         value from this function.
         """
         backslash_re = re.compile(r"\\$")
 
-        with open(self._path, "r", encoding="ascii") as sudo:
+        with self._path.open(encoding="ascii") as sudo:
             for line in sudo:
                 # Strip whitespace from beginning and end
-                line = line.strip()
+                linestr = line.strip()
                 # Ignore all comments
-                if line.startswith("#"):
+                if linestr.startswith("#"):
                     continue
                 # Ignore all empty lines
-                if not line:
+                if not linestr:
                     continue
 
-                if backslash_re.search(line):
-                    concatline = line.rstrip("\\")
+                if backslash_re.search(linestr):
+                    concatline = linestr.rstrip("\\")
                     while True:
                         # Get the next line from the file
                         nextline = next(sudo).strip()
@@ -305,19 +328,20 @@ class Sudoers:
                         if not backslash_re.search(nextline):
                             break
 
-                    line = concatline
+                    linestr = concatline
 
-                logging.debug(line)
-                self.parse_line(line)
+                logging.debug(linestr)
+                self.parse_line(linestr)
 
-    def _resolve_aliases(self, alias_type, name):
-        """For the provided alias type, resolve the provided name for any aliases that may exist.
+    def _resolve_aliases(self, alias_type: str, name: str) -> list:
+        """
+        For the provided alias type, resolve the provided name for any aliases that may exist.
 
         This function is recursive in nature.  If the provided name is not an existing alias, it is returned (as a
         list). If the name is an alias of the provided type, the function is called again on each of the names derived
         from the alias in case there are nested aliases.
 
-        :param obj alias_type: The alias type for which we are resolving
+        :param str alias_type: The alias type for which we are resolving
         :param str name: A string representing a name or another alias
 
         :return: A list of one or more name
@@ -341,30 +365,30 @@ class Sudoers:
 
         return data
 
-    def resolve_command(self, command):
+    def resolve_command(self, command: str) -> list:
         """Resolve the provided command for any aliases that may exist."""
         return self._resolve_aliases("Cmnd_Alias", command)
 
-    def resolve_host(self, host):
+    def resolve_host(self, host: str) -> list:
         """Resolve the provided host for any aliases that may exist."""
         return self._resolve_aliases("Host_Alias", host)
 
-    def resolve_runas(self, runas):
+    def resolve_runas(self, runas: str) -> list:
         """Resolve the provided run as user for any aliases that may exist."""
         return self._resolve_aliases("Runas_Alias", runas)
 
-    def resolve_user(self, user):
+    def resolve_user(self, user: str) -> list:
         """Resolve the provided user for any aliases that may exist."""
         return self._resolve_aliases("User_Alias", user)
 
 
-class BadAliasException(Exception):
+class BadAliasExceptionError(Exception):
     """Provide a custom exception type to be raised when an alias is malformed."""
 
 
-class BadRuleException(Exception):
+class BadRuleExceptionError(Exception):
     """Provide a custom exception type to be raised when a rule is malformed."""
 
 
-class DuplicateAliasException(Exception):
+class DuplicateAliasExceptionError(Exception):
     """Provide a custom exception type to be raised when an alias is malformed."""
