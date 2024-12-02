@@ -1,0 +1,5 @@
+Containerfile
+.git*
+dev.sh
+tests/*
+.[a-z]*

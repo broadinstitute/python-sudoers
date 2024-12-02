@@ -18,14 +18,39 @@ python = "^3.9"  # Compatible python versions must be declared here
 
 toml = "^0.10.2"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 bump2version = "^1.0.1"
 coverage = "^7.6.4"
-green = "^4.0.0"
 mock = "^5.1.0"
 pydocstyle = "^6.3.0"
-pylama = "^8.4.1"
-pylint = "^3.3.1"
+pyright = "^1.1.389"
+pytest = "^8.3.4"
+ruff = "^0.8.1"
 testtools = "^2.7.2"
 unittest2 = "^1.1.0"
 yamllint = "^1.35.1"
+
+[tool.ruff.lint]
+select = ["ALL"]
+# https://docs.astral.sh/ruff/rules
+# Ignore pycodestyle that is redundant -- and can conflict -- with the
+# formatter.
+# Ignore flake8-logging-format because it's extremely ugly for dubious
+# performance gains.
+# Ignore two pydocstyle rules that cause internal conflicts and raise warnings.
+# Ignore flake8-copyright because it's not necessary on closed-source software.
+# Ignore two rules that ruff warns can cause conflicts with the formatter.
+ignore = ["E", "G", "D203", "D212", "CPY", "COM812", "ISC001"]
+
+[tool.ruff.lint.extend-per-file-ignores]
+"tests/*" = [
+    # Don't require an __init__.py for tests.
+    "INP",
+    # Allow assert statements for pytest.
+    "S101",
+    # Allow using internal data members.
+    "SLF001",
+]
+
+[tool.ruff.lint.flake8-pytest-style]
+fixture-parentheses = true

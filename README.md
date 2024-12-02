@@ -1,32 +1,33 @@
 # pysudoers
 
-This library provides a [Python][1] interface to the Linux sudoers file.  python-sudoers is open sourced under the [BSD 3-Clause license](LICENSE.txt).
+This library provides a [Python][1] interface to the Linux sudoers file.
+python-sudoers is open sourced under the [BSD 3-Clause license](LICENSE.txt).
 
 ![checks](https://github.com/broadinstitute/python-sudoers/workflows/checks/badge.svg?branch=main)
 
 ## Basics
 
-`pysudoers` runs on [Python][1] >= 3.6
+`pysudoers` runs on [Python][1] >= 3.9
 
 ## Features
 
-This library parses a sudoers file into its component parts.  It's not 100% compliant with the EBNF format of the file (yet), but it's getting there.  Currently, the script parses out 6 distinct line types from the file:
+This library parses a sudoers file into its component parts. It's not 100% compliant with the EBNF format of the file (yet), but it's getting there. Currently, the script parses out 6 distinct line types from the file:
 
-* Defaults (This is only a string currently.  Pieces of a Defaults setting are not parsed/separated.)
-* Cmnd_Alias
-* Host_Alias
-* Runas_Alias
-* User_Alias
-* User specifications (which we call **rules**)
+- Defaults (This is only a string currently. Pieces of a Defaults setting are not parsed/separated.)
+- Cmnd_Alias
+- Host_Alias
+- Runas_Alias
+- User_Alias
+- User specifications (which we call **rules**)
 
-As user specifications are the most complicated, they are most likely the area that needs the most improvement.  Currently, the following pieces of a user specification are separated out as part of the parsing:
+As user specifications are the most complicated, they are most likely the area that needs the most improvement. Currently, the following pieces of a user specification are separated out as part of the parsing:
 
-* User list
-* Host list
-* Command list (containing):
-  * Tags
-  * Run As notations
-  * Commands
+- User list
+- Host list
+- Command list (containing):
+    - Tags
+    - Run As notations
+    - Commands
 
 One caveat to add is, this module currently does not do anything with `#include`, `#includedir`, `@include` and `@includedir` lines, but simply ignores them. You can, however, parse any included files individually if needed, but any interdependencies between the files will not be resolved.
 
@@ -40,7 +41,7 @@ pip install pysudoers
 
 ## Examples
 
-Parsing of the `sudoers` file is done as part of initializing the `Sudoers` object.  So, you can start using the properties under `Sudoers` immediately.  The following example will print out all the different "types" from the file:
+Parsing of the `sudoers` file is done as part of initializing the `Sudoers` object. So, you can start using the properties under `Sudoers` immediately. The following example will print out all the different "types" from the file:
 
 ```python
 from pysudoers import Sudoers
@@ -83,36 +84,36 @@ for rule in sobj.rules:
 
 ## Contributing
 
-Pull requests to add functionality and fix bugs are always welcome.  Please check the CONTRIBUTING.md for specifics on contributions.
+Pull requests to add functionality and fix bugs are always welcome. Please check the CONTRIBUTING.md for specifics on contributions.
 
 ### Testing
 
-We try to have a high level of test coverage on the code.  Therefore, when adding anything to the repo, tests should be written to test a new feature or to test a bug fix so that there won't be a regression.  This library is setup to be pretty simple to build a working development environment using [Docker][3].  Therefore, it is suggested that you have [Docker][3] installed where you clone this repository to make development easier.
+We try to have a high level of test coverage on the code. Therefore, when adding anything to the repo, tests should be written to test a new feature or to test a bug fix so that there won't be a regression. This library is setup to be pretty simple to build a working development environment using [Docker][3] or [Podman][6]. Therefore, it is suggested that you have [Docker][3] or [Podman][6] installed where you clone this repository to make development easier.
 
-To start a development environment, you should be able to just run the `dev.sh` script.  This script will use the `Dockerfile` in this repository to build a [Docker][3] container with all the dependencies for development installed using [Poetry][2].
+To start a development environment, you should be able to just run the `dev.sh` script. This script will use the `Containerfile` in this repository to build a container image with all the dependencies for development installed using [Poetry][2].
 
 ```sh
 ./dev.sh
 ```
 
-The first time you run the script, it should build the [Docker][3] image and then drop you into the container's shell.  The directory where you cloned this repository should be volume mounted in to `/usr/src`, which should also be the current working directory.  From there, you can make changes as you see fit.  Tests can be run from the `/usr/src` directory by simply typing `green` as [green][4] has been setup to with the correct parameters.
+The first time you run the script, it should build the container image and then drop you into the container's shell. The directory where you cloned this repository should be volume mounted in to `/working`, which should also be the current working directory. From there, you can make changes as you see fit. Tests can be run from the `/working` directory by simply typing `pytest` as [pytest][4] has been setup to with the correct parameters.
 
 ## Changelog
 
-To generate the `CHANGELOG.md`, you will need [Docker][3] and a GitHub personal access token.  We currently use [github-changelog-generator](https://github.com/github-changelog-generator/github-changelog-generator) for this purpose.  The following should generate the file using information from GitHub:
+To generate the `CHANGELOG.md`, you will need [Docker][3] or [Podman][6] and a GitHub personal access token. We currently use [github-changelog-generator](https://github.com/github-changelog-generator/github-changelog-generator) for this purpose. The following should generate the file using information from GitHub:
 
 ```sh
-docker run -it --rm \
+podman run -it --rm \
     -e CHANGELOG_GITHUB_TOKEN='yourtokenhere' \
     -v "$(pwd)":/working \
     -w /working \
     ferrarimarco/github-changelog-generator --verbose
 ```
 
-To generate the log for an upcoming release that has not yet been tagged, you can run a command to include the upcoming release version.  For example, `2.0.0`:
+To generate the log for an upcoming release that has not yet been tagged, you can run a command to include the upcoming release version. For example, `2.0.0`:
 
 ```sh
-docker run -it --rm \
+podman run -it --rm \
     -e CHANGELOG_GITHUB_TOKEN='yourtokenhere' \
     -v "$(pwd)":/working \
     -w /working \
@@ -121,7 +122,7 @@ docker run -it --rm \
 
 ## Releases
 
-Releases to the codebase are typically done using the [bump2version][5] tool.  This tool takes care of updating the version in all necessary files, updating its own configuration, and making a GitHub commit and tag.  We typically do version bumps as part of a PR, so you don't want to have [bump2version][5] tag the version at the same time it does the commit as commit hashes may change.  Therefore, to bump the version a patch level, one would run the command:
+Releases to the codebase are typically done using the [bump2version][5] tool. This tool takes care of updating the version in all necessary files, updating its own configuration, and making a GitHub commit and tag. We typically do version bumps as part of a PR, so you don't want to have [bump2version][5] tag the version at the same time it does the commit as commit hashes may change. Therefore, to bump the version a patch level, one would run the command:
 
 ```sh
 bump2version --verbose --no-tag patch
@@ -139,5 +140,6 @@ git push --tags
 [1]: https://www.python.org/ "Python"
 [2]: https://python-poetry.org/ "Poetry"
 [3]: https://www.docker.com/ "Docker"
-[4]: https://github.com/CleanCut/green "green"
+[4]: https://docs.pytest.org/en/stable/ "pytest"
 [5]: https://pypi.org/project/bump2version/ "bump2version"
+[6]: https://podman.io/ "Podman"
