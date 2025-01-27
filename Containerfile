@@ -20,6 +20,7 @@ RUN apt-get update \
     && apt-get upgrade -y \
     && apt-get install -yq curl make \
     && pip install -U pip poetry \
+    && curl -sSL https://install.python-poetry.org | python3 - \
     && poetry install --no-root \
     && rm -rf /tmp/* \
     && rm -rf /var/cache/apt/* \

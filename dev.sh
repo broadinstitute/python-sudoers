@@ -4,9 +4,7 @@ declare -g CHECKSUM_APP
 declare -g CONTAINER_APP
 declare -g CONTAINER_IMAGE='pysudoers:dev'
 declare -g LABEL_PREFIX='org.broadinstitute.pysudoers'
-declare -g OPTS
 declare -g SCRIPT_DIR
-declare -ag SSH_FORWARD
 declare -ga TRACK_FILES=( Containerfile poetry.lock pyproject.toml )
 declare -ga SUDO
 declare -ag TTY
