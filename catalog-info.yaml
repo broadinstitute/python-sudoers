@@ -1,0 +1,15 @@
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: python-sudoers
+  description: Python library for parsing a Linux sudoers file
+  tags:
+    - python
+  annotations:
+    github.com/project-slug: broadinstitute/python-sudoers
+    backstage.io/source-template: template:default/open-pr-with-catalog-entry
+spec:
+  type: service
+  lifecycle: production
+  owner: devnull
