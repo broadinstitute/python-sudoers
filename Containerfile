@@ -12,7 +12,7 @@ COPY --from=prettier-install /usr/local/bin/node $LOCAL_BIN
 COPY --from=prettier-install /node_modules/prettier /prettier
 RUN ln -s /prettier/bin/prettier.cjs $LOCAL_BIN/prettier
 
-COPY poetry.lock pyproject.toml README.md /working/
+COPY poetry.lock pyproject.toml docs/README.md /working/
 
 WORKDIR /working
 
