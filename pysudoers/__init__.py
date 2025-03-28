@@ -286,7 +286,7 @@ class Sudoers:
 
             self._data[index][key] = members
             # Debugging output
-            logging.info("%s: %s => %s", index, key, members)
+            LOGGER.info("%s: %s => %s", index, key, members)
         elif defaults_re.search(line):
             self._data["Defaults"].append(line)
         else:
@@ -330,7 +330,7 @@ class Sudoers:
 
                     linestr = concatline
 
-                logging.debug(linestr)
+                LOGGER.debug(linestr)
                 self.parse_line(linestr)
 
     def _resolve_aliases(self, alias_type: str, name: str) -> list:

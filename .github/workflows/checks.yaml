@@ -7,6 +7,8 @@ name: "checks"
       - "main"
 
 jobs:
+  conventional-commits:
+    uses: broadinstitute/shared-workflows/.github/workflows/conventional-commit.yaml@v3.0.0
   pre-commit:
     uses: broadinstitute/shared-workflows/.github/workflows/pre-commit.yaml@v3.0.0
   linting:
