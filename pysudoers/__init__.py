@@ -286,7 +286,7 @@ class Sudoers:
 
             self._data[index][key] = members
             # Debugging output
-            LOGGER.info("%s: %s => %s", index, key, members)
+            LOGGER.debug("%s: %s => %s", index, key, members)
         elif defaults_re.search(line):
             self._data["Defaults"].append(line)
         else:
