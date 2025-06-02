@@ -150,6 +150,32 @@ class TestInit(TestSudoers):
         assert sudoobj._data["Cmnd_Alias"]["SOMECMND"] == ["/path/to/the/command"]
         assert "SOMEHOSTS" in sudoobj._data["Host_Alias"]
         assert sudoobj._data["Host_Alias"]["SOMEHOSTS"] == ["some-host1", "some-host2"]
+        # Check the values for multiples aliases in a single statement
+        assert "SPARC" in sudoobj._data["Host_Alias"]
+        assert sudoobj._data["Host_Alias"]["SPARC"] == [
+            "bigtime",
+            "eclipse",
+            "moet",
+            "anchor"
+        ]
+        assert "SGI" in sudoobj._data["Host_Alias"]
+        assert sudoobj._data["Host_Alias"]["SGI"] == [
+            "grolsch",
+            "dandelion",
+            "black"
+        ]
+        assert "ALPHA" in sudoobj._data["Host_Alias"]
+        assert sudoobj._data["Host_Alias"]["ALPHA"] == [
+            "widget",
+            "thalamus",
+            "foobar"
+        ]
+        assert "HPPA" in sudoobj._data["Host_Alias"]
+        assert sudoobj._data["Host_Alias"]["HPPA"] == [
+            "boa",
+            "nag",
+            "python"
+        ]
         assert "SOMERUNAS" in sudoobj._data["Runas_Alias"]
         assert sudoobj._data["Runas_Alias"]["SOMERUNAS"] == ["runuser"]
         assert "SOMEUSERS" in sudoobj._data["User_Alias"]
@@ -192,6 +218,31 @@ class TestProperties(TestSudoers):
         # Make sure the values match
         assert "SOMEHOSTS" in self.sudoobj.host_aliases
         assert self.sudoobj.host_aliases["SOMEHOSTS"] == ["some-host1", "some-host2"]
+        assert "SPARC" in self.sudoobj.host_aliases
+        assert self.sudoobj.host_aliases["SPARC"] == [
+            "bigtime",
+            "eclipse",
+            "moet",
+            "anchor"
+        ]
+        assert "SGI" in self.sudoobj.host_aliases
+        assert self.sudoobj.host_aliases["SGI"] == [
+            "grolsch",
+            "dandelion",
+            "black"
+        ]
+        assert "ALPHA" in self.sudoobj.host_aliases
+        assert self.sudoobj.host_aliases["ALPHA"] == [
+            "widget",
+            "thalamus",
+            "foobar"
+        ]
+        assert "HPPA" in self.sudoobj.host_aliases
+        assert self.sudoobj.host_aliases["HPPA"] == [
+            "boa",
+            "nag",
+            "python"
+        ]
 
     def test_rules(self) -> None:
         """Rules property returns the correct data."""
