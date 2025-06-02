@@ -25,3 +25,6 @@ SOMEUSERS ALL=(SOMERUNAS) /path/to/something/else
 SOMEUSERS SOMEHOSTS = (ALL) NOPASSWD: /path/to/something/else, /path/to/more
 
 randouser SOMEHOSTS=(SOMERUNAS) SOMECMND, (root)/path/to/more/things
+
+ALL CDROM = NOPASSWD: /sbin/umount /CDROM,\
+    /sbin/mount -o nosuid\,nodev /dev/cd0a /CDROM
