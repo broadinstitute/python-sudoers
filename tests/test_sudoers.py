@@ -76,6 +76,21 @@ class TestSudoers(TestCase):
                     },
                 ],
             },
+            {
+                "users": ["ALL"],
+                "hosts": ["CDROM"],
+                "commands": [
+                    {
+                        "run_as": ["root"],
+                        "tags": ["NOPASSWD"],
+                        "command": "/sbin/umount /CDROM"},
+                    {
+                        "run_as": ["root"],
+                        "tags": ["NOPASSWD"],
+                        "command": "/sbin/mount -o nosuid,nodev /dev/cd0a /CDROM"
+                     },
+                ],
+            }
         ]
 
         self.fake_path = Path("/path/to/sudoers")
