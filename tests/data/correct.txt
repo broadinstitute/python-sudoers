@@ -26,5 +26,12 @@ SOMEUSERS SOMEHOSTS = (ALL) NOPASSWD: /path/to/something/else, /path/to/more
 
 randouser SOMEHOSTS=(SOMERUNAS) SOMECMND, (root)/path/to/more/things
 
+# The following examples are from https://www.man7.org/linux/man-pages/man5/sudoers.5.html
+
 ALL CDROM = NOPASSWD: /sbin/umount /CDROM,\
     /sbin/mount -o nosuid\,nodev /dev/cd0a /CDROM
+
+Host_Alias     SPARC = bigtime, eclipse, moet, anchor :\
+               SGI = grolsch, dandelion, black :\
+               ALPHA = widget, thalamus, foobar :\
+               HPPA = boa, nag, python
