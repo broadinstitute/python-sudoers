@@ -79,12 +79,14 @@ class Sudoers:
     @classmethod
     def parse_alias(cls, alias_key: str, line: str) -> Generator[tuple, None, None]:
         """
-        Parse an alias line into its component parts.
+        Parse an alias line into its component parts,
+        a single statement can declare mutiple aliases.
 
         :param str alias_key: The type of alias we are parsing
         :param str line: The line from sudoers
 
-        :return: 0) the key for the alias and 1) the list of members of that alias
+        :return: A generator of the aliases declared in the statement,
+                 each entry is a tuple: 0) the key for the alias and 1) the list of members of that alias
         :rtype: Generator[tuple, None, None]
         """
         # We need to keep all line spacing, so use the original line with the index stripped
