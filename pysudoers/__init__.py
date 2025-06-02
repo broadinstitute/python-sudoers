@@ -92,7 +92,9 @@ class Sudoers:
         # We need to keep all line spacing, so use the original line with the index stripped
         kvline = re.sub(rf"^{alias_key}\s*", "", line)
 
-        for sub_alias in re.split(r"[^\\|sha224|sha256|sha384|sha512]:", kvline):
+        # The : character is used to declare multiple aliases
+        # Do not split when it is escaped or preceded by a known statement
+        for sub_alias in re.split(r"(?<!\\)(?<!sha224|sha256|sha384|sha512):", kvline):
             # Split out the alias key/value
             keyval = cls.escaped_split(sub_alias, "=", maxsplit=1)
             if (len(keyval) != cls.MIN_LINE_PIECES) or (not keyval[1]):
