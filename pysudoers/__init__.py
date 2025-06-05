@@ -5,7 +5,11 @@ from __future__ import annotations
 import logging
 import re
 from pathlib import Path
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
+
 
 LOGGER = logging.getLogger(__name__)
 
@@ -77,38 +81,43 @@ class Sudoers:
         return self._data["User_Alias"]
 
     @classmethod
-    def parse_alias(cls, alias_key: str, line: str) -> tuple:
+    def parse_alias(cls, alias_key: str, line: str) -> Generator[tuple, None, None]:
         """
-        Parse an alias line into its component parts.
+        Parse an alias line into its component parts, a single statement can declare mutiple aliases.
 
         :param str alias_key: The type of alias we are parsing
         :param str line: The line from sudoers
 
-        :return: 0) the key for the alias and 1) the list of members of that alias
-        :rtype: tuple
+        :return: A generator of the aliases declared in the statement,
+                 each entry is a tuple: 0) the key for the alias and 1) the list of members of that alias
+        :rtype: Generator[tuple, None, None]
         """
         # We need to keep all line spacing, so use the original line with the index stripped
         kvline = re.sub(rf"^{alias_key}\s*", "", line)
 
-        # Split out the alias key/value
-        keyval = cls.escaped_split(kvline, "=", maxsplit=1)
-        if (len(keyval) != cls.MIN_LINE_PIECES) or (not keyval[1]):
-            errmsg = f"bad alias: {line}"
-            raise BadAliasExceptionError(errmsg)
+        # The : character is used to declare multiple aliases
+        # Do not split when it is escaped or preceded by a known statement
+        for sub_alias in re.split(r"(?<!\\)(?<!sha224|sha256|sha384|sha512):", kvline):
+            # Split out the alias key/value
+            keyval = cls.escaped_split(sub_alias, "=", maxsplit=1)
+            if (len(keyval) != cls.MIN_LINE_PIECES) or (not keyval[1]):
+                errmsg = f"bad alias: {line}"
+                raise BadAliasExceptionError(errmsg)
 
-        # Separate the comma-separated list of values
-        val_list = cls.escaped_split(keyval[1], ",")
-        if not val_list:
-            errmsg = f"bad alias: {line}"
-            raise BadAliasExceptionError(errmsg)
-        # Make sure extra whitespace is stripped for each item in the list, then convert back to a list
-        val_list = list(map(str.strip, val_list))
+            # Separate the comma-separated list of values
+            val_list = cls.escaped_split(keyval[1], ",")
 
-        # Return a tuple with the key / value pair
-        return (keyval[0], val_list)
+            if not val_list:
+                errmsg = f"bad alias: {line}"
+                raise BadAliasExceptionError(errmsg)
+            # Make sure extra whitespace is stripped for each item in the list, then convert back to a list
+            val_list = list(map(str.strip, val_list))
+
+            # Return a tuple with the key / value pair
+            yield (keyval[0], val_list)
 
     @staticmethod
-    def parse_commands(commands: str) -> list:  # pylint: disable-msg=too-many-locals
+    def parse_commands(commands: str) -> list:  # noqa:C901,PLR0912 pylint: disable-msg=too-many-locals
         """
         Parse all commands from a rule line.
 
@@ -143,8 +152,11 @@ class Sudoers:
                 if char == ")":
                     in_parens = False
             elif char == ",":
-                cmds.append(curr_string)
-                curr_string = ""
+                if curr_string[-1] == "\\":
+                    curr_string = curr_string[:-1] + char
+                else:
+                    cmds.append(curr_string)
+                    curr_string = ""
             elif char == "(":
                 in_parens = True
                 curr_string += "("
@@ -279,14 +291,14 @@ class Sudoers:
                 errmsg = f"bad alias: {line}"
                 raise BadAliasExceptionError(errmsg)
 
-            (key, members) = self.parse_alias(index, line)
-            if key in self._data[index]:
-                errmsg = f"duplicate alias: {line}"
-                raise DuplicateAliasExceptionError(errmsg)
+            for key, members in self.parse_alias(index, line):
+                if key in self._data[index]:
+                    errmsg = f"duplicate alias: {line}"
+                    raise DuplicateAliasExceptionError(errmsg)
 
-            self._data[index][key] = members
-            # Debugging output
-            LOGGER.debug("%s: %s => %s", index, key, members)
+                self._data[index][key] = members
+                # Debugging output
+                LOGGER.info("%s: %s => %s", index, key, members)
         elif defaults_re.search(line):
             self._data["Defaults"].append(line)
         else:

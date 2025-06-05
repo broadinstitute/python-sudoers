@@ -49,7 +49,7 @@ function build() {
         labels+=( --label "$label" )
     done
 
-    "${SUDO[@]}" "$CONTAINER_APP" build --pull -t "$CONTAINER_IMAGE" "${labels[@]}" .
+    "${SUDO[@]}" "$CONTAINER_APP" build -f Containerfile --pull -t "$CONTAINER_IMAGE" "${labels[@]}" .
 }
 
 if [[ "$TERM" != 'dumb' ]]; then
