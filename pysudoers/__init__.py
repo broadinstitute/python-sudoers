@@ -5,7 +5,11 @@ from __future__ import annotations
 import logging
 import re
 from pathlib import Path
-from typing import ClassVar, Generator
+from typing import TYPE_CHECKING, ClassVar
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
+
 
 LOGGER = logging.getLogger(__name__)
 
@@ -79,8 +83,7 @@ class Sudoers:
     @classmethod
     def parse_alias(cls, alias_key: str, line: str) -> Generator[tuple, None, None]:
         """
-        Parse an alias line into its component parts,
-        a single statement can declare mutiple aliases.
+        Parse an alias line into its component parts, a single statement can declare mutiple aliases.
 
         :param str alias_key: The type of alias we are parsing
         :param str line: The line from sudoers
@@ -114,7 +117,7 @@ class Sudoers:
             yield (keyval[0], val_list)
 
     @staticmethod
-    def parse_commands(commands: str) -> list:  # pylint: disable-msg=too-many-locals
+    def parse_commands(commands: str) -> list:  # noqa:C901,PLR0912 pylint: disable-msg=too-many-locals
         """
         Parse all commands from a rule line.
 
@@ -288,7 +291,7 @@ class Sudoers:
                 errmsg = f"bad alias: {line}"
                 raise BadAliasExceptionError(errmsg)
 
-            for (key, members) in self.parse_alias(index, line):
+            for key, members in self.parse_alias(index, line):
                 if key in self._data[index]:
                     errmsg = f"duplicate alias: {line}"
                     raise DuplicateAliasExceptionError(errmsg)
