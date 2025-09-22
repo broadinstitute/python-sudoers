@@ -16,7 +16,7 @@ compliant with the EBNF format of the file (yet), but it's getting there.
 Currently, the script parses out 6 distinct line types from the file:
 
 - Defaults (This is only a string currently. Pieces of a Defaults setting are
-not parsed/separated.)
+  not parsed/separated.)
 - Cmnd_Alias
 - Host_Alias
 - Runas_Alias
@@ -36,8 +36,8 @@ specification are separated out as part of the parsing:
 
 One caveat to add is, this module currently does not do anything with
 `#include`, `#includedir`, `@include` and `@includedir` lines, but simply
-ignores them. You can, however, parse any included files individually if
-needed, but any interdependencies between the files will not be resolved.
+ignores them. You can, however, parse any included files individually if needed,
+but any interdependencies between the files will not be resolved.
 
 ## Installing
 
@@ -50,8 +50,8 @@ pip install pysudoers
 ## Examples
 
 Parsing of the `sudoers` file is done as part of initializing the `Sudoers`
-object. So, you can start using the properties under `Sudoers` immediately.
-The following example will print out all the different "types" from the file:
+object. So, you can start using the properties under `Sudoers` immediately. The
+following example will print out all the different "types" from the file:
 
 ```Python
 from pysudoers import Sudoers
@@ -95,18 +95,17 @@ for rule in sobj.rules:
 
 ## Contributing
 
-Pull requests to add functionality and fix bugs are always welcome. Please
-check the CONTRIBUTING.md for specifics on contributions.
+Pull requests to add functionality and fix bugs are always welcome. Please check
+the CONTRIBUTING.md for specifics on contributions.
 
 ### Testing
 
-We try to have a high level of test coverage on the code. Therefore, when
-adding anything to the repo, tests should be written to test a new feature or
-to test a bug fix so that there won't be a regression. This library is setup to
-be pretty simple to build a working development environment using [Docker][3]
-or [Podman][6]. Therefore, it is suggested that you have [Docker][3] or
-[Podman][6] installed where you clone this repository to make development
-easier.
+We try to have a high level of test coverage on the code. Therefore, when adding
+anything to the repo, tests should be written to test a new feature or to test a
+bug fix so that there won't be a regression. This library is setup to be pretty
+simple to build a working development environment using [Docker][3] or
+[Podman][6]. Therefore, it is suggested that you have [Docker][3] or [Podman][6]
+installed where you clone this repository to make development easier.
 
 To start a development environment, you should be able to just run the `dev.sh`
 script. This script will use the `Containerfile` in this repository to build a
@@ -131,11 +130,11 @@ Changelogs are now created as part of the GitHub release process.
 ## Versioning
 
 Updating the version is typically done using the [bump2version][5] tool. This
-tool takes care of updating the version in all necessary files, updating its
-own configuration, and making a GitHub commit and tag. We typically do version
-bumps as part of a PR, so you don't want to have [bump2version][5] tag the
-version at the same time it does the commit as commit hashes may change.
-Therefore, to bump the version a patch level, one would run the command:
+tool takes care of updating the version in all necessary files, updating its own
+configuration, and making a GitHub commit and tag. We typically do version bumps
+as part of a PR, so you don't want to have [bump2version][5] tag the version at
+the same time it does the commit as commit hashes may change. Therefore, to bump
+the version a patch level, one would run the command:
 
 ```Shell
 bump2version --verbose --no-tag patch

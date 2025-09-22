@@ -1,5 +1,5 @@
 ---
-site_name: 'python-sudoers Documentation'
+site_name: python-sudoers Documentation
 
 nav:
   - Home: README.md
