@@ -1,5 +1,5 @@
 ---
-name: "deploy"
+name: deploy
 permissions:
   contents: read
   pull-requests: read
