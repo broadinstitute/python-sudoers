@@ -283,16 +283,16 @@ class TestParser(TestSudoers):
         # Find the path to the test sudoers file
         data = "Host_Alias\n"
         mopen = self.get_mock_open(data)
-        with mock.patch.object(Path, "open", mopen):
-            pytest.raises(BadAliasExceptionError, Sudoers, path=self.fake_path)
+        with mock.patch.object(Path, "open", mopen), pytest.raises(BadAliasExceptionError):
+            _ = Sudoers(path=self.fake_path)
 
     def test_bad_alias2(self) -> None:
         """An alias without a name will raise an exception."""
         # Find the path to the test sudoers file
         data = "Runas_Alias SOMERUNAS=\n"
         mopen = self.get_mock_open(data)
-        with mock.patch.object(Path, "open", mopen):
-            pytest.raises(BadAliasExceptionError, Sudoers, path=self.fake_path)
+        with mock.patch.object(Path, "open", mopen), pytest.raises(BadAliasExceptionError):
+            _ = Sudoers(path=self.fake_path)
 
     def test_dup_alias(self) -> None:
         """An alias without a name will raise an exception."""
@@ -302,16 +302,16 @@ class TestParser(TestSudoers):
         Host_Alias SOMEHOSTS=host3, host4
         """
         mopen = self.get_mock_open(data)
-        with mock.patch.object(Path, "open", mopen):
-            pytest.raises(DuplicateAliasExceptionError, Sudoers, path=self.fake_path)
+        with mock.patch.object(Path, "open", mopen), pytest.raises(DuplicateAliasExceptionError):
+            _ = Sudoers(path=self.fake_path)
 
     def test_bad_rule(self) -> None:
         """A rule without an equal sign will raise an exception."""
         # Find the path to the test sudoers file
         data = "SOMEUSERS SOMEHOSTS (SOMERUNAS) SOMECMND\n"
         mopen = self.get_mock_open(data)
-        with mock.patch.object(Path, "open", mopen):
-            pytest.raises(BadRuleExceptionError, Sudoers, path=self.fake_path)
+        with mock.patch.object(Path, "open", mopen), pytest.raises(BadRuleExceptionError):
+            _ = Sudoers(path=self.fake_path)
 
     def test_escaped_split(self) -> None:
         """A command alias with embedded commas and escaped charaters will be correctly split."""
