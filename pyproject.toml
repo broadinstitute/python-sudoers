@@ -25,15 +25,15 @@ toml = "^0.10.2"
 
 [tool.poetry.group.dev.dependencies]
 bump2version = "^1.0.1"
-coverage = "^7.10.7"
+coverage = "^7.14.3"
 mock = "^5.2.0"
 pydocstyle = "^6.3.0"
-pyright = "^1.1.410"
-pytest = "^9.0.3"
-ruff = "^0.15.17"
-testtools = "^2.7.2"
+pyright = "^1.1.411"
+pytest = "^9.1.1"
+ruff = "^0.15.20"
+testtools = "^2.9.1"
 unittest2 = "^1.1.0"
-yamllint = "^1.37.1"
+yamllint = "^1.38.0"
 
 [tool.ruff.lint]
 select = ["ALL"]
